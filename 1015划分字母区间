@@ -1,0 +1,118 @@
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+int getOneSlice(vector<pair<char, bool>> splitVec)
+{
+	char nowC;
+	vector<char> usedVec, needVec;
+	nowC = splitVec.begin()->first;
+	needVec.push_back(nowC);
+	int nowI = 0;
+	while (!needVec.empty())
+	{
+		for (vector<pair<char, bool>>::iterator it = splitVec.begin(); it != splitVec.end(); it++)
+		{
+			if (nowC == it->first)
+			{
+				it->second = true;
+				nowI = it - splitVec.begin();
+			}
+		}
+		usedVec.push_back(nowC);
+
+		for (auto it = needVec.begin(); it != needVec.end(); it++)
+		{
+			if (*it == nowC)
+			{
+				needVec.erase(it);
+				break;
+			}
+		}
+		if (!needVec.empty())
+		{
+			nowC = needVec[0];
+		}
+		
+
+		bool needContinue = false;
+		for (int i = 0; i < nowI; i++)
+		{
+			splitVec[i].second = true;
+			for (int j = 0; j < usedVec.size(); j++)
+			{
+				if (usedVec[j] == splitVec[i].first)
+				{
+					needContinue = true;
+					break;
+				}
+			}
+			for (int j = 0; j < needVec.size(); j++)
+			{
+				if (needVec[j] == splitVec[i].first)
+				{
+					needContinue = true;
+					break;
+				}
+			}
+			if (needContinue == true)
+			{
+				needContinue = false;
+				continue;
+			}
+
+			nowC = splitVec[i].first;
+			needVec.push_back(nowC);
+		}
+	}
+	int maxlen = 0;
+	for (int i = 0; i < usedVec.size(); i++)
+	{
+		for (int j = splitVec.size() - 1; j >= 0; j--)
+		{
+			if (splitVec[j].first == usedVec[i])
+			{
+				if (j > maxlen)
+				{
+					maxlen = j;
+				}
+				break;
+			}
+		}
+	}
+	return maxlen + 1;
+}
+
+int main()
+{
+	int len = 0;
+	string str;
+	cin >> str;
+	vector<pair<char, bool>> splitVec;
+	vector<int> output;
+	for (int i = 0; i < str.size(); i++)
+	{
+		splitVec.push_back(make_pair(str[i], false));
+	}
+	while (!splitVec.empty())
+	{
+		len = getOneSlice(splitVec);
+		output.push_back(len);
+		splitVec.erase(splitVec.begin(), splitVec.begin() + len);
+	}
+
+	if (0 == output.size())
+	{
+		cout << "0" << endl;
+		return 0;
+	}
+	cout << output[0];
+	for (int i = 1; i < output.size(); i++)
+	{
+		cout << "," << output[i];
+	}
+	cout << endl;
+
+	return 0;
+}
