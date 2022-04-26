@@ -1,0 +1,65 @@
+/*1013 Emacs计算器
+Emacs号称神的编辑器，它自带了一个计算器。与其他计算器不同，它是基于后缀表达式的，即运算符在操作数的后面。例如“2 3 +”等价于中缀表达式的“2 + 3”。
+请你实现一个后缀表达式的计算器。
+*/
+
+/*IN
+输入包含一组数据。
+每组数据包括两行：第一行是一个正整数n (3≤n≤50)；紧接着第二行包含n个由数值和运算符组成的列表。
+“+ - * /”分别为加减乘除四则运算，其中除法为整除，即“5 / 3 = 1”。 
+
+5
+2 2 3 + *
+*/
+
+/*OUT
+对应每一组数据，输出它们的运算结果。
+
+10
+*/
+#include <iostream>
+#include <stack>
+#include <vector>
+#include <string>
+using namespace std;
+
+int main()
+{
+	int n;
+	string str;
+	stack<string> chSt;
+	cin >> n;
+	for (int i=0;i<n;i++)
+	{
+		cin >> str;
+		if (str == "*" || str == "/" || str == "+" || str == "-")
+		{
+			int a = stoi(chSt.top());
+			chSt.pop();
+			int b = stoi(chSt.top());
+			chSt.pop();
+			if (str == "*")
+			{
+				chSt.push(to_string(a * b));
+			}
+			else if (str == "/")
+			{
+				chSt.push(to_string(b / a));
+			}
+			else if (str == "-")
+			{
+				chSt.push(to_string(b - a));
+			}
+			else if (str == "+")
+			{
+				chSt.push(to_string(a + b));
+			}
+		}
+		else
+		{
+			chSt.push(str);
+		}
+	}
+	string s = chSt.top();
+	std::cout << s << endl;
+}
