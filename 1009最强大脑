@@ -1,1 +1,108 @@
 
+#include <iostream>
+#include <vector>
+#include <map>
+#include <stack>
+#include <string.h>
+using namespace std;
+
+int main()
+{
+	vector<pair<int, int>> arrV = { {0,1}, {1,0}, {0, -1}, {-1, 0} };
+	int x, y;
+	cin >> x >> y;
+	char c;
+	map<char, pair<int, int>> arrMap;
+	stack<pair<int, int>> sta;
+	char arr[101][101];
+	bool arrb[101][101];
+	memset(arr, 0, sizeof(arr));
+	memset(arrb, false, sizeof(arr));
+	for (size_t i = 0; i < x; i++)
+	{
+		for (size_t j = 0; j < y; j++)
+		{
+			cin >> c;
+			if (c != '0' && c != '1')
+			{
+				arrMap[c] = make_pair(i, j);
+			}
+			arr[i][j] = c;
+		}
+	}
+	if (arrMap.find('2') != arrMap.end())
+	{
+		sta.push(arrMap['2']);
+	}
+	else
+	{
+		return 0;
+	}
+	pair<int, int> now;
+	while (!arrMap.empty())
+	{
+		while (!sta.empty())
+		{
+			now = sta.top();
+			sta.pop();
+			arrb[now.first][now.second] = true;
+			for (int i = 0; i < 4; i++)
+			{
+				if ((now.first + arrV[i].first < 0) || (now.second + arrV[i].second < 0))
+				{
+					continue;
+				}
+
+				if (arrb[now.first + arrV[i].first][now.second + arrV[i].second] == true)
+				{
+					continue;
+				}
+
+				char tmp = arr[now.first + arrV[i].first][now.second + arrV[i].second];
+				if ((tmp == '0') || (tmp > 'A' && tmp < 'Z'))
+				{
+					continue;
+				}
+
+				if (tmp == '3')
+				{
+					cout << "yes" << endl;
+					return 0;
+				}
+
+				if (tmp >= 'a' && tmp <= 'z')
+				{
+					auto it = arrMap.find(tmp - 'a' + 'A');
+					if (it != arrMap.end())
+					{
+						arr[it->second.first][it->second.second] = '1';
+					}
+					sta.push(make_pair(now.first + arrV[i].first, now.second + arrV[i].second));
+				}
+				if (tmp == '1')
+				{
+					sta.push(make_pair(now.first + arrV[i].first, now.second + arrV[i].second));
+				}
+			}
+		}
+
+		for (auto it = arrMap.begin(); it != arrMap.end(); )
+		{
+			if (it->first >= 'A' && it->first <= 'Z')
+			{
+				if (false == arrb[it->second.first][it->second.second] && '1' == arr[it->second.first][it->second.second])
+				{
+					sta.push(make_pair(it->second.first, it->second.second));
+					it++;
+					continue;
+				}
+			}
+			arrMap.erase(it++);
+		}
+
+	}
+
+	cout << "no" << endl;
+	return 0;
+
+}
