@@ -1,0 +1,72 @@
+/*1005 最强大脑
+有一个容器，结构如下，内部有n个柱子，给出每个柱子的高度，计算此容器最多能存多少水。
+
+			  |
+	   |水水水| 水|
+  | 水 | |水 || | | |
+———————————
+*/
+
+/*IN
+数组 [0,1,0,2,1,0,1,3,2,1,2,1] ，每个数字代表该柱子的高度
+
+0 1 0 2 1 0 1 3 2 1 2 1
+*/
+
+/*OUT
+该排列下的柱子能存水的总量，
+在上述输入这组数据的排列下可以存水的量为6个单位
+
+6
+*/
+
+/*HIT
+请注意效率
+*/
+
+#include <iostream>
+#include <vector>
+using namespace std;
+int main()
+{
+	int max = 0;
+	vector<int>intVec;
+	int n;
+	while (cin >> n)
+	{
+		if (cin.get() == '\n')
+		{
+			break;
+		}
+		if (n > max)
+		{
+			max = n;
+		}
+		intVec.push_back(n);
+	}
+
+	pair<int, bool> left = { 0, false };
+	int count = 0;
+	for (size_t i = 0; i < max; i++)
+	{
+		for (size_t j = 0; j < intVec.size(); j++)
+		{
+			if (intVec[j] > i)
+			{
+				if (!left.second)
+				{
+					left.first = j;
+					left.second = true;
+					continue;
+				}
+				count = count + j - left.first - 1;
+				left.first = j;
+			}
+
+		}
+		left.second = false;
+	}
+	cout << count << endl;
+
+
+}
