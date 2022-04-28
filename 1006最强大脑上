@@ -1,0 +1,83 @@
+/*1006 最强大脑
+连连看游戏中玩家鼠标先后点击两块相同棋子，试图将他们消去，然后游戏的后台判断这两个方格能不能消去。现在你的任务就是写这个后台程序。
+判断最多能消除多少对。
+*/
+
+/*IN
+输入数据有多组。每组数据的第一行有两个正整数n,m(0<n<=100,0<m<100)，分别表示棋盘的行数与列数。在接下来的n行中，每行有m个非负整数描述棋盘的方格分布。
+0表示这个位置没有棋子，正整数表示棋子的类型。n=0,m=0时，输入结束。
+所有输入中，一个棋盘里相同棋子数量不超过两个。
+
+3 4
+1 2 3 4
+0 0 0 0
+4 3 2 1
+3 4
+0 1 4 3
+0 2 4 1
+0 0 0 0
+2 4
+1 5 2 4
+1 3 2 3
+0 0
+*/
+
+/*OUT
+每一组输入数据对应一行输出。输出为一个数字。
+printf("%d\n", result);
+
+4
+2
+3
+*/
+
+#include <iostream>
+#include <map>
+#include <vector>
+#include <string.h>
+#include <stack>
+using namespace std;
+
+vector<pair<int, int>> derc = { {0,1},{0,-1},{1,0},{-1,0} };
+typedef struct stInfo
+{
+	int x;			//x位置
+	int y;			//y位置
+	int num;		//对应数字， 单个数或无法遇到改为-1
+	int numCount;	//数字出现次数
+	bool arrived;	//是否到达过
+	bool skip;		//是否下次再查
+}ST_INFO;
+
+void resetArrivedAndSkip(map<pair<int, int>, ST_INFO>& infoMap, bool resetSkip)
+{
+	for (auto it = infoMap.begin(); it != infoMap.end(); it++)
+	{
+		it->second.arrived = false;
+		if (true == resetSkip)
+		{
+			it->second.skip = false;
+		}
+	}
+}
+
+
+void changeNumCount(map<pair<int, int>, ST_INFO>& infoMap)
+{
+	map<int, vector<ST_INFO>> tmpMap;
+	for (auto it = infoMap.begin(); it != infoMap.end(); it++)
+	{
+		if (it->second.num > 0)
+		{
+			tmpMap[it->second.num].push_back(it->second);
+		}
+	}
+
+	for (auto it = infoMap.begin(); it != infoMap.end(); it++)
+	{
+		if (it->second.num > 0)
+		{
+			it->second.numCount = tmpMap[it->second.num].size();
+		}
+	}
+}
