@@ -1,0 +1,48 @@
+/*1007 最强大脑
+两个整数之间的别扭距离指的是这两个数字对应二进制位不同的位置的数目。
+*/
+
+/*IN
+给出两个整数x和y
+0<=x,y<=2^31
+
+1 4
+*/
+
+/*OUT
+它们的别扭距离
+
+2
+*/
+
+/*HIT
+解释：
+输入：1 4
+输出 ：2
+1 （0 0 0 1）
+4  （0 1 0 0）
+
+有两位不一样
+*/
+
+#include <iostream>
+using namespace std;
+
+int main()
+{
+	unsigned int n, m;
+	cin >> n >> m;
+	unsigned int ot = n ^ m;
+	int out = 0;
+	while (ot)
+	{
+		if (ot % 2 == 1)
+		{
+			out++;
+		}
+		ot /= 2;
+	}
+	cout << out << endl;
+}
+
+
