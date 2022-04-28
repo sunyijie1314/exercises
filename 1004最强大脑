@@ -1,0 +1,72 @@
+/*1004 最强大脑
+一个长度为n的正自然数数组[x1, x2, … ,xn]，数组中任选m(m < n)个数相加，可得到一系列和，求这些和中最大的平方数是多少，如果没有平方数返回0
+平方数为一个正整数的平方，如9， 16， 25
+*/
+
+/*IN
+键盘输入，格式为：
+// n , m （1<=n<=20，m＜n）
+// x1,x2，…,xn （1<= xi <=5000000
+
+5 4
+1 2 3 4 5
+
+14 13
+25 58 6 55 18 81 67 57 36 8 31 43 61 4
+*/
+
+/*OUT
+//屏幕输出，格式为：
+//一个整数（最大的平方数、没有平方数返回0）
+
+0
+
+0
+*/
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+bool getSquare(int num, int& square)
+{
+	int n = floor(sqrt(num));
+	if (n * n == num)
+	{
+		square = n;
+		return true;
+	}
+	return false;
+}
+
+int cycle(vector<int> intVec, int index, int mCount, int m, int sum, int& max)
+{
+	int square = 0;
+	if (mCount == m)
+	{
+		if (getSquare(sum, square) && sum > max)
+		{
+			max = sum;
+		}
+		return 0;
+	}
+	for (size_t i = index; i < intVec.size(); i++)
+	{
+		cycle(intVec, i + 1, mCount + 1, m, sum + intVec[i], max);
+	}
+}
+
+int main()
+{
+	int n, m, a;
+	cin >> n >> m;
+	vector<int> intVec;
+	for (size_t i = 0; i < n; i++)
+	{
+		cin >> a;
+		intVec.push_back(a);
+	}
+	int max = 0;
+	cycle(intVec, 0, 0, m, 0, max);
+	std::cout << max << endl;
+}
