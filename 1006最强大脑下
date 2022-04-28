@@ -1,0 +1,138 @@
+void removeNot2(map<pair<int, int>, ST_INFO>& infoMap)
+{
+	for (auto it = infoMap.begin(); it != infoMap.end(); it++)
+	{
+		if (it->second.numCount == 1)
+		{
+			it->second.num = -1;
+			it->second.numCount = 0;
+		}
+	}
+}
+
+bool getNewLocation(map<pair<int, int>, ST_INFO>& infoMap, pair<int, int>& newPair)
+{
+	for (auto it = infoMap.begin(); it != infoMap.end(); it++)
+	{
+		if (it->second.num > 0 && it->second.skip == false)
+		{
+			newPair = it->first;
+			infoMap[newPair].arrived = true;
+			return true;
+		}
+	}
+	return false;
+}
+
+int main()
+{
+	int n, m;
+	while (cin >> n >> m)
+	{
+		if (n == 0 && m == 0)
+		{
+			break;
+		}
+		map<pair<int, int>, ST_INFO> infoMap;
+		pair<int, int> pairInt;
+		int num = 0;
+		for (size_t i = 0; i < n; i++)
+		{
+			for (size_t j = 0; j < m; j++)
+			{
+				cin >> num;
+				pairInt = make_pair(i, j);
+				ST_INFO info;
+				memset(&info, 0, sizeof(ST_INFO));
+				info.arrived = false;
+				info.skip = false;
+				info.x = i;
+				info.y = j;
+				info.num = num;
+				if (num > 0)
+				{
+					info.numCount++;
+				}
+				infoMap[pairInt] = info;
+			}
+		}
+		changeNumCount(infoMap);
+		removeNot2(infoMap);
+
+		int count = 0;
+		int cycle = 0;
+		bool getNewNum = false;
+		stack<pair<int, int>> staInt;
+		pair<int, int> newPair;
+		pair<int, int> lastPair;
+		while (getNewLocation(infoMap, newPair))
+		{
+			staInt.push(newPair);
+			while (!staInt.empty())
+			{
+				pair<int, int>nowPair = staInt.top();
+				staInt.pop();
+				for (size_t i = 0; i < derc.size(); i++)
+				{
+					int x = nowPair.first + derc[i].first;
+					int y = nowPair.second + derc[i].second;
+					if (x < 0 || y < 0)
+					{
+						continue;
+					}
+					pair<int, int>tmp = { x,y };
+					if (infoMap.find(tmp) == infoMap.end())
+					{
+						continue;
+					}
+
+					if (infoMap[tmp].arrived == true)
+					{
+						continue;
+					}
+
+					if (infoMap[tmp].num == infoMap[newPair].num)
+					{
+						//cout << "(" << tmp.first << "," << tmp.second << "),(" << newPair.first << "," << newPair.second << ")" << endl;
+						count++;
+						infoMap[tmp].num = 0;
+						infoMap[newPair].num = 0;
+						resetArrivedAndSkip(infoMap, true);
+						getNewNum = true;
+						break;
+					}
+
+					infoMap[tmp].arrived = true;
+					if (infoMap[tmp].num > 0 || infoMap[tmp].num < 0)
+					{
+
+						continue;
+					}
+
+					staInt.push(tmp);
+				}
+
+				if (getNewNum == true)
+				{
+					getNewNum = false;
+					while (!staInt.empty())
+					{
+						staInt.pop();
+					}
+				}
+			}
+			if (newPair == lastPair)
+			{
+				cycle++;
+				if (cycle > n * m / 2)
+				{
+					infoMap[newPair].skip = true;
+					resetArrivedAndSkip(infoMap, false);
+				}
+			}
+
+			lastPair = newPair;
+		}
+		cout << count << endl;
+	}
+}
