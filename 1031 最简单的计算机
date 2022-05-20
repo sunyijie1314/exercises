@@ -1,0 +1,74 @@
+/*1031 最简单的计算机
+一个研究组织设计了一台实验用的计算机，命名为Archon。
+Archon只能执行简单的六种命令A，B，C，D，E，F；只有二个内存M1，M2；三个寄存器R1，R2，R3。
+六种命令的含义如下：
+命令A：将内存M1 的数据装到寄存器R1 中；
+命令B：将内存M2 的数据装到寄存器R2 中；
+命令C：将寄存器R3 的数据装到内存M1 中；
+命令D：将寄存器R3 的数据装到内存M2 中；
+命令E：将寄存器R1 中的数据和寄存器R2 中的数据相加，结果放到寄存器R3 中；
+命令F：将寄存器R1 中的数据和寄存器R2 中的数据相减，结果放到寄存器R3 中。
+你的任务是：设计一个程序模拟Archon 的运行。
+*/
+
+/*IN
+有若干组，每组有2 行，第一行是2个整数，分别表示M1和M2 中的初始内容；
+第二行是一串长度不超过200 的由大写字母A 到F 组成的命令串，命令串的含义如上所述。
+
+100 288
+ABECED
+876356 321456
+ABECAEDBECAF
+*/
+
+/*OUT
+对应每一组的输入，输出只有一行，二个整数，分别表示M1，M2 的内容；其中M1 和M2 之间用逗号隔开。
+
+388,388
+2717080,1519268
+*/
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main()
+{
+	int M1, M2, R1, R2, R3;
+	M1 = 0;
+	M2 = 0;
+	R1 = 0;
+	R2 = 0;
+	R3 = 0;
+	string str;
+	while (cin >> M1 >> M2 >> str)
+	{
+		for (size_t i = 0; i < str.size(); i++)
+		{
+			switch (str[i])
+			{
+			case 'A':
+				R1 = M1;
+				break;
+			case 'B':
+				R2 = M2;
+				break;
+			case 'C':
+				M1 = R3;
+				break;
+			case 'D':
+				M2 = R3;
+				break;
+			case 'E':
+				R3 = R1 + R2;
+				break;
+			case 'F':
+				R3 = R1 - R2;
+				break;
+			default:
+				break;
+			}
+		}
+		std::cout << M1 << "," << M2 << endl;
+	}
+}
