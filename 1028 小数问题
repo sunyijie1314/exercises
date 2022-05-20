@@ -1,0 +1,86 @@
+/*1028 小数问题
+给定两个正整数A和B，求A/B的最后一位小数的值
+如果A/B是无限循环小数或者是整数则输出0
+*/
+
+/*in
+输入有多行，每行两个正整数A和B
+
+1 3
+1 2
+1 5
+2 1
+*/
+
+/*out
+对于每组输入，输出A/B的最后一位小数的值，如果A/B是无限循环小数或者是整数则输出0
+
+0
+5
+2
+0
+*/
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+bool isCycle(string str)
+{
+	for (size_t i=0;i<str.size();i++)
+	{
+		for (size_t j = i+1; j < str.size(); j++)
+		{
+			while (str[i]==str[j])
+			{
+				if (j==str.size()-1)
+				{
+					return true;
+				}
+				i++;
+				j++;
+			}
+		}
+	}
+	return false;
+}
+
+int main()
+{
+	int a, b;
+	string str;
+	while (cin>>a>>b)
+	{
+		int count = 0;
+		int c = a % b;
+		if (!c)
+		{
+			cout << "0" << endl;
+			continue;
+		}
+		int num = c;
+		while (num)
+		{
+			while (num*10<b)
+			{
+				num = num * 10;
+				str += "0";
+			}
+			str += to_string(num * 10 / b);
+			num = num * 10 % b;
+			count++;
+			if (count>=20)
+			{
+				if (isCycle(str))
+				{
+					cout << "0" << endl;
+					break;
+				}
+			}
+		}
+		if (!num)
+		{
+			cout << str[str.size() - 1] << endl;
+		}
+	}
+}
