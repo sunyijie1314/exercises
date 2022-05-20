@@ -1,0 +1,77 @@
+/*1044 价格怎么不对
+双11的时候大家的购物车总是加的满满当当。然而在小明付款的时候发现，总价总是超出预算！
+购物车中原有的每件物品价格列表N0~Nm（0<m<10，0<N(m)<100），但是发现超出预算，因此从购物车删除了X件商品，最终付款了Y元，符合预算，求小明最多从购物车中删除了多少件商品？
+*/
+
+/*IN
+第一行表示用例数量，接下来每一行是具体的用例
+
+
+用例格式为：
+实际付款Y元 购物车物品数量m（每样物品仅一件） 价格列表N0-N(m-1)（以空格分隔）
+
+例如：
+2                       // 包含2个用例
+100 2 100 100    // 付款100元，购物车中原本有2件商品，价格分别为100、100
+30 3 30 20 10     // 付款30元，购物车中原本有3件商品，价格分别为30、20、10
+
+
+2
+100 2 100 100
+30 3 30 20 10
+*/
+
+/*OUT
+每一个用例对应的结果
+
+
+例如：
+1 // 最坏情况下有1件商品没有买，比如删除了一件100元的商品
+2 // 最坏情况下有2件商品没有买，比如删除了一件30元的商品或者删除两件（20和10元）商品，因为求最多删除件数，故为2
+
+1
+2
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+bool cmp(int a, int b)
+{
+	return a > b;
+}
+
+int main()
+{
+	int num = 0;
+	cin >> num;
+	for (size_t i = 0; i < num; i++)
+	{
+		vector<int> commodity;
+		int pay, n;
+		cin >> pay >> n;
+		int mon;
+		for (size_t j = 0; j < n; j++)
+		{
+			cin >> mon;
+			commodity.push_back(mon);
+		}
+		sort(commodity.begin(), commodity.end(), cmp);
+		size_t j = 0;
+		for (; j < commodity.size(); j++)
+		{
+			pay -= commodity[j];
+			if (pay <= 0)
+			{
+				cout << commodity.size() - j - 1 << endl;
+				break;
+			}
+		}
+		if (j != commodity.size())
+		{
+			continue;
+		}
+		cout << "0" << endl;
+	}
+}
