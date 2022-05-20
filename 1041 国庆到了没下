@@ -1,0 +1,100 @@
+ST_TIME getTime(int utc)
+{
+	//北京时间增加8小时,从1月0日开始计算
+	utc = utc + 8 * 3600 + 24 * 3600;
+	int Amonth[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+	ST_TIME stTime;
+	int second = utc % 60;
+	int minute = (utc - second) / 60 % 60;
+	int hour = (utc - second - 60 * minute) / 3600 % 24;
+	int day = (utc - second - 60 * minute - 3600 * hour) / 3600 / 24;
+	stTime.hour = hour;
+	stTime.minute = minute;
+	stTime.second = second;
+
+	int fourYear = 365 * 4 + 1;
+	int dayLeft = day % fourYear;
+	if (dayLeft >= 365 && dayLeft < 365 * 2)
+	{
+		dayLeft = dayLeft % 365;
+		stTime.leapYear = -1;
+	}
+	else if (dayLeft >= 365 * 2 && dayLeft < 365 * 3 + 1)
+	{
+		Amonth[1] = 29;
+		dayLeft = (dayLeft - 365 * 2) % 366;
+		stTime.leapYear = 0;
+	}
+	else if (dayLeft >= 365 * 3 + 1)
+	{
+		dayLeft = (dayLeft - 365 * 3 - 1) % 365;
+		stTime.leapYear = 1;
+	}
+	else
+	{
+		stTime.leapYear = -2;
+	}
+
+	for (size_t i = 0; i < 12; i++)
+	{
+		if (dayLeft > Amonth[i])
+		{
+			dayLeft -= Amonth[i];
+		}
+		else
+		{
+			stTime.month = i + 1;
+			stTime.day = dayLeft;
+			break;
+		}
+	}
+
+	return stTime;
+
+}
+
+int main()
+{
+	int utc;
+	while (cin >> utc)
+	{
+		int Amonth[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+		ST_TIME stTime = getTime(utc);
+		if (stTime.month == 10 && stTime.day == 1)
+		{
+			cout << "^_^" << endl;
+			continue;
+		}
+		int day = 0;
+		if (stTime.month < 10)
+		{
+			if (stTime.leapYear == 0)
+			{
+				Amonth[1] = 29;
+			}
+			for (int i = 9; i > stTime.month; i--)
+			{
+				day += Amonth[i - 1];
+			}
+			day += 31 - stTime.day;
+			cout << day << endl;
+			continue;
+		}
+		if (stTime.leapYear == -1)
+		{
+			Amonth[1] = 29;
+		}
+		for (int i = 12; i > stTime.month; i--)
+		{
+			day += Amonth[i - 1];
+		}
+		day += 31 - stTime.day;
+		for (size_t i = 0; i < 10; i++)
+		{
+			day += Amonth[i];
+		}
+		cout << day << endl;
+		continue;
+	}
+}
+
