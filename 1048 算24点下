@@ -1,0 +1,126 @@
+int operate(int a, int b, int n)
+{
+	if (a == -1 || b == -1)
+	{
+		return -1;
+	}
+	switch (n)
+	{
+	case 0:
+		return a + b;
+	case 1:
+		return a - b;
+	case 2:
+		return a * b;
+	default:
+		break;
+	}
+	if (b == 0 || a % b != 0)
+	{
+		return -1;
+	}
+	return a / b;
+}
+
+int main()
+{
+	int line;
+	cin >> line;
+	bool end = false;
+	for (size_t i = 0; i < line; i++)
+	{
+		int tmp;
+		vector<int> intVec;
+		for (size_t j = 0; j < 4; j++)
+		{
+			cin >> tmp;
+			intVec.push_back(tmp);
+		}
+		sort(intVec.begin(), intVec.end());
+
+		int sum = 0;
+		do
+		{
+			sum = 0;
+			for (size_t j = 0; j < 4; j++)
+			{
+				for (size_t k = 0; k < 4; k++)
+				{
+					for (size_t l = 0; l < 4; l++)
+					{
+						//((ab)c)d
+						sum = operate(intVec[0], intVec[1], j);
+						sum = operate(sum, intVec[2], k);
+						sum = operate(sum, intVec[3], l);
+						if (sum == 24)
+						{
+							end = true;
+							break;
+						}
+
+						//(a(bc))d
+						sum = operate(intVec[1], intVec[2], k);
+						sum = operate(intVec[0], sum, j);
+						sum = operate(sum, intVec[3], l);
+						if (sum == 24)
+						{
+							end = true;
+							break;
+						}
+
+						//(ab)(cd)
+						int sum1 = operate(intVec[2], intVec[3], l);
+						sum = operate(intVec[0], intVec[1], j);
+						sum = operate(sum, sum1, k);
+						if (sum == 24)
+						{
+							end = true;
+							break;
+						}
+
+						//a(b(cd))
+						sum = operate(intVec[2], intVec[3], l);
+						sum = operate(intVec[1], sum, k);
+						sum = operate(intVec[0], sum, i);
+						if (sum == 24)
+						{
+							end = true;
+							break;
+						}
+
+						//a((bc)d)
+						sum = operate(intVec[1], intVec[2], k);
+						sum = operate(sum, intVec[3], l);
+						sum = operate(intVec[0], sum, i);
+						if (sum == 24)
+						{
+							end = true;
+							break;
+						}
+					}
+					if (end)
+					{
+						break;
+					}
+				}
+				if (end)
+				{
+					break;
+				}
+			}
+			if (end)
+			{
+				break;
+			}
+		} while (next_permutation(intVec.begin(), intVec.end()));
+		if (end)
+		{
+			cout << "Possibly" << endl;
+		}
+		else
+		{
+			cout << "Impossibly" << endl;
+		}
+		end = false;
+	}
+}
