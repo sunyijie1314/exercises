@@ -1,0 +1,82 @@
+/*1027 分水果问题
+孔家有N个孩子(3<= N <= 10)，一天大人买了N个不同种类的水果各1个(编为1号水果，2号水果，。。。N号水果)，
+将这N个水果分给N个孩子，但是老大和老二有挑食习惯，老大只吃1号水果和2号水果，老二只吃2号水果和3号水果，其他孩子无挑食习惯，
+请问水果分给孩子有多少种分法。
+
+例如下面的样例，输入为3时，输出为3
+解释如下：
+老大                老二                老三
+1号水果           2号水果          3号水果
+1号水果           3号水果          2号水果
+2号水果           3号水果          1号水果
+*/
+
+/*in
+输入孔家孩子的个数N (3<= N <= 10)
+
+3
+*/
+
+/*out
+输出分梨的分法数目
+
+3
+*/
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main()
+{
+	int n;
+	cin >> n;
+	int count = 0;
+	vector<int> intV;
+	//老大1，老二2
+	intV.clear();
+	for (size_t i = 3; i <= n; i++)
+	{
+		intV.push_back(i);
+	}
+	do 
+	{
+		count++;
+	} while (next_permutation(intV.begin(),intV.end()));
+
+	//老大1，老二3
+	intV.clear();
+	for (size_t i = 2; i <= n; i++)
+	{
+		if (i==3)
+		{
+			continue;
+		}
+		intV.push_back(i);
+	}
+	do
+	{
+		count++;
+	} while (next_permutation(intV.begin(), intV.end()));
+
+	//老大2，老二3
+	intV.clear();
+	for (size_t i = 1; i <= n; i++)
+	{
+		if (i == 2 || i == 3)
+		{
+			continue;
+		}
+		intV.push_back(i);
+	}
+	do
+	{
+		count++;
+	} while (next_permutation(intV.begin(), intV.end()));
+	
+
+
+    std::cout << count<<endl; 
+}
+
