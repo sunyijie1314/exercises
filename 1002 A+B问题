@@ -1,0 +1,13 @@
+/*1002 A+B problem
+输入 a  和 b ，输出 a+b 的结果。 
+*/
+
+#include <iostream>
+using namespace std;
+int main()
+{
+	int a, b;
+	cin >> a >> b;
+	cout<< a + b<<endl;
+}
+
