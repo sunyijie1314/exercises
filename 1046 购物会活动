@@ -1,0 +1,76 @@
+/*1046 购物会活动
+小阳正在参加一个线下购物会，购物会场地由很多矩阵排列的商铺构成，每个商铺出售一种商品，这些商品全是小阳非常喜欢的，但是小阳要控制自己的花销，否则下个月就得吃土了。
+我们假设所有的商铺呈正方形矩阵排列，小阳从最左上角的商铺出发，他只能选择向右走或向下走，最后从最右下角的商铺离开，这个过程中，每经过一个商铺，他就得购买这个商铺出售的商品。
+问：小阳购物花销最少需要多少？
+*/
+
+/*IN
+输入的第一行表示总的用例数。
+每个用例的第一行表示正方形矩阵单边顶点数N，总商铺数即为N^2。 （n <= 100）
+接下来的N行中，每一行包含N个数字，表示某个商铺出售的商品价格。
+
+1
+3
+12 15 34
+45 89 23
+33 49 72
+*/
+
+/*OUT
+输出的行数与输入的用例数对应，每I行表示第I个用例的执行结果，即购物最小花销。
+
+156
+*/
+
+/*HINT
+标例输入中第1行的1表示1个用例，第二行的3表示矩阵边长。
+*/
+#include <iostream>
+#include <vector>
+#include <string.h>
+#include <algorithm>
+using namespace std;
+int good[100][100];
+int dp[100][100];
+
+int main()
+{
+	int n;
+	cin >> n;
+	for (size_t i = 0; i < n; i++)
+	{
+		memset(good, 0, sizeof(good));
+		int N, tmp;
+		cin >> N;
+		for (size_t j = 0; j < N; j++)
+		{
+			for (size_t k = 0; k < N; k++)
+			{
+				cin >> tmp;
+				good[j][k] = tmp;
+			}
+		}
+		dp[0][0] = good[0][0];
+		for (size_t j = 0; j < N; j++)
+		{
+			for (size_t k = 0; k < N; k++)
+			{
+				if (j == 0 && k != 0)
+				{
+					dp[j][k] = dp[j][k - 1] + good[j][k];
+				}
+				else if (k == 0 && j != 0)
+				{
+					dp[j][k] = dp[j - 1][k] + good[j][k];
+				}
+				else
+				{
+					dp[j][k] = min(dp[j - 1][k], dp[j][k - 1]) + good[j][k];
+				}
+
+			}
+		}
+		cout << dp[N - 1][N - 1] << endl;
+
+	}
+}
