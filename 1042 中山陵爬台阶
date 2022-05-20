@@ -1,0 +1,111 @@
+/*1042 中山陵爬台阶
+今年国庆假期，程序员小杨与好友一块去南京游玩，游玩的一个景点是著名的中山陵，中山陵的一个显著特点是有很长的台阶，游客需要从陵底爬很长的台阶才能到达陵顶欣赏风景。
+小杨拥有一双大长腿，上台阶过程中一步能爬最多3阶台阶，爱思考的小杨陷入了沉思：我从陵底爬到陵顶，共有多少种不同的走法？
+*/
+
+/*IN
+输入有多行，第1行表示有X个用例，从第2行起，每一行为一个数字，对应一条用例，表示总台阶数N，N<=1000
+
+3
+5
+10
+100
+*/
+
+/*OUT
+输出多行，每一行对应一个用例的结果，输出一行整数，表示爬台阶的总走法。
+
+13
+274
+180396380815100901214157639
+*/
+
+/*HINT
+注：使用递归调用注意可能会超时！ 输出的结果可能是个巨大的整数！
+解释：当N为5时，小杨爬台阶的总走法有如下13种：
+1,1,1,1,1
+1,1,1,2
+1,1,2,1
+1,1,3
+1,2,1,1
+1,2,2
+1,3,1
+2,1,1,1
+2,1,2
+2,2,1
+2,3
+3,1,1
+3,2
+*/
+
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+string myPlus(string x, string y)
+{
+	string sum;
+	int carry = 0;
+	int xlen = x.size();
+	int ylen = y.size();
+	if (xlen>ylen)
+	{
+		for (size_t i = 0; i < xlen-ylen; i++)
+		{
+			y = '0' + y;
+		}
+	}
+	else
+	{
+		for (size_t i = 0; i < ylen - xlen; i++)
+		{
+			x = '0' + x;
+		}
+	}
+
+	for (int i = y.size()-1; i >= 0; i--)
+	{
+		int tmp = x[i] - '0' + y[i] - '0' + carry;
+		if (tmp>9)
+		{
+			sum = to_string(tmp % 10) + sum;
+			carry = tmp / 10;
+		}
+		else
+		{
+			sum = to_string(tmp) + sum;
+			carry = 0;
+		}
+	}
+
+	if (carry)
+	{
+		sum = to_string(carry) + sum;
+	}
+	return sum;
+}
+
+vector<string> myStr;
+
+int main()
+{
+	myStr.push_back("1");
+	myStr.push_back("1");
+	myStr.push_back("2");
+	int num;
+	int n;
+	cin >> num;
+	for (size_t j = 0; j < num; j++)
+	{
+		cin >> n;
+		for (size_t i = myStr.size(); i <= n; i++)
+		{
+			myStr.push_back(myPlus(myPlus(myStr[i - 3], myStr[i - 2]), myStr[i - 1]));
+		}
+		std::cout << myStr[n] << endl;
+	}
+
+}
+
+
