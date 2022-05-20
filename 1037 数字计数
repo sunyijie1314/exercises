@@ -1,0 +1,92 @@
+/*1037 数字计数
+有1个电子日历上可以显示一个月所有的日期。日期的显示格式是XXXX-XX-XX 这样的年-月-日格式(注意 月和日不足两位数前面补0),
+现在翻到该电子日历任意一年的一个月份，并输入一个数字，请问该数字出现在该电子日历上出现的次数。
+*/
+
+/*IN
+输入3个数字y m z，分别表示年，月，和要查找出现次数的数字, 其中(1970<=y<=3000 , 1<=m<=12, 0<=z<=9)
+
+2016 6 6
+*/
+
+/*OUT
+输出一个整数，表示数字z在该月的日期里出现了多少次
+
+63
+*/
+
+/*HIT
+日历中，日有数字6的为2016-06-06 2016-06-16 2016-06-26 ，因为年份和月份中各有一个6，6月有30天，因此6总共出现了3+30+30=63次
+*/
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+bool isLeapYear(int y)
+{
+	if (y % 400 == 0)
+	{
+		return true;
+	}
+	if (y % 4 == 0 && y % 100 != 0)
+	{
+		return true;
+	}
+	return false;
+}
+
+int main()
+{
+	int mon[12] = { 31, 28,31,30,31,30,31,31,30,31,30,31 };
+	int y, m, z;
+	cin >> y >> m >> z;
+	if (y < 1970 || y>3000 || m < 1 || m>12 || z < 0 || z>9)
+	{
+		return 0;
+	}
+	if (m == 2 && isLeapYear(y))
+	{
+		mon[1] = 29;
+	}
+	int count = 0;
+	int n = 0;
+	string stry = to_string(y);
+	string strm = to_string(m);
+	if (strm.size() == 1)
+	{
+		strm = '0' + strm;
+	}
+	stry += strm;
+	for (size_t i = 0; i < stry.size(); i++)
+	{
+		if (stry[i] == z + '0')
+		{
+			n++;
+		}
+	}
+
+
+	count += n * mon[m - 1];
+
+	string strd;
+	for (size_t i = 1; i <= mon[m - 1]; i++)
+	{
+		if (i < 10)
+		{
+			strd += '0' + to_string(i);
+		}
+		else
+		{
+			strd += to_string(i);
+		}
+	}
+	for (size_t i = 0; i < strd.size(); i++)
+	{
+		if (strd[i] == z + '0')
+		{
+			count++;
+		}
+	}
+	cout << count << endl;
+}
