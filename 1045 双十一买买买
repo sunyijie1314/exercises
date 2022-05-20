@@ -1,0 +1,86 @@
+/*1045 双十一买买买
+又到了双十一买买买的时间了，小明同学双十一前已经在购入车中加入很多商品了，今天小明要开始提交订单了，但是预算有限。
+看购物车里显示每个商品比加入购物车时便宜了xxx元，小明打算选择只买部分商品但想要便宜的金额尽量大（总价不能超出预算），请哪位厉害的程序猿来帮帮小明吧。
+*/
+
+/*IN
+第一行是小明购物车中的商品数量n（0 < n < 1000）和预算金额m（m是正整数，0 < m < 100000）
+接下来n行，每行两个整数，分别是原价a和当前价格b; (每行代表一件商品，同一商品不会重复购买)
+
+3 100
+500 101
+50 20
+50 20
+*/
+
+/*OUT
+输出最大的便宜金额是多少（选择的商品总额不能大于预算）
+
+60
+*/
+
+/*HINT
+3 100
+500 101
+50 20
+50 20
+
+选择第2件和第3件商品，原价是50、50，现价20、20,总共便宜了60
+*/
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string.h>
+using namespace std;
+typedef pair<int, int> intPair;
+vector<intPair> goodVec;
+
+int main()
+{
+	int* dp = new int[100001];//消费金额 = 最大省钱
+	for (size_t j = 0; j < 100001; j++)
+	{
+		dp[j] = 0;
+	}
+
+	int line, money;
+	cin >> line >> money;
+	for (size_t i = 0; i < line; i++)
+	{
+		int pre, tmpnow;
+		cin >> pre >> tmpnow;
+		if (tmpnow > money)
+		{
+			continue;
+		}
+		intPair tmp = make_pair(pre, tmpnow);
+		goodVec.push_back(tmp);
+	}
+	for (size_t i = 1; i <= goodVec.size(); i++)
+	{
+		intPair tmpGood = goodVec[i - 1];
+		for (int j = money; j >= 0; j--)
+		{
+			if (j < tmpGood.second)
+			{
+				dp[j] = dp[j];
+			}
+			else
+			{
+				dp[j] = max(dp[j], dp[j - tmpGood.second] + tmpGood.first - tmpGood.second);
+			}
+		}
+	}
+
+	int max = 0;
+	for (size_t j = 0; j <= money; j++)
+	{
+		if (dp[j] > max)
+		{
+			max = dp[j];
+		}
+	}
+	cout << max << endl;
+	delete[]dp;
+}
