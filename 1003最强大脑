@@ -1,0 +1,93 @@
+/*1003 最强大脑
+大华对产品的安全相关部分越来越重视，其中密码组成字符可为数字(0-9)、大写字母(A-Z)、小写字母(a-z)、特殊字符(下划线 _、at字符@)这四类字符。
+请编写程序实现密码强度的判定，其规则为：
+1.密码长度范围为[8,32]
+2.由三类及三类以上的字符组成的密码，强度为强 Strong
+3.由两类字符组成的密码，强度为中 Middle
+4.由一类字符组成的密码，强度为弱 Weak
+*/
+
+/*IN
+测试输入包含若干测试用例，每个测试用例占一行，即为一个密码
+
+DAHUA2019_ojoj
+DAHUA2019ojoj
+DAHUA2019
+DAHUATECH
+*/
+
+/*OUT
+对每个测试用例输出1行，即密码强度的结果。
+当无法使用Strong、Middle、Weak判定密码强度时，输出Input Valid
+
+Strong
+Strong
+Middle
+Weak
+*/
+#include <iostream>
+
+using namespace std;
+int main()
+{
+	string str;
+	while (cin >>str)
+	{
+		if (str=="quit")
+		{
+			break;
+		}
+		if (str.size()<8||str.size()>32)
+		{
+			cout << "Input Valid" << endl;
+			continue;
+		}
+		bool arr[4] = { false,false,false,false };
+		for (size_t i=0;i<str.size();i++)
+		{
+			if (str[i]>='0' && str[i]<='9')
+			{
+				arr[0] = true;
+			}
+			if (str[i] >= 'A' && str[i] <= 'Z')
+			{
+				arr[1] = true;
+			}
+			if (str[i] >= 'a' && str[i] <= 'z')
+			{
+				arr[2] = true;
+			}
+			if (str[i] == '_' || str[i] == '@')
+			{
+				arr[3] = true;
+			}
+		}
+		int trueCount = 0;
+		for (int i=0;i<4;i++)
+		{
+			if (arr[i]==true)
+			{
+				trueCount++;
+			}
+		}
+		switch (trueCount)
+		{
+		case 0:
+			cout << "Input Valid" << endl;
+			break;
+		case 1:
+			cout << "Weak" << endl;
+			break;
+		case 2:
+			cout << "Middle" << endl;
+			break;
+		case 3:
+		case 4:
+			cout << "Strong" << endl;
+			break;
+		default:
+			break;
+		}
+	}
+
+}
