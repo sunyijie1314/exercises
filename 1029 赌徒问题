@@ -1,0 +1,106 @@
+/*1029 赌徒问题
+有N个赌徒在玩一个游戏：
+
+在游戏开始阶段，每个赌徒出一定数量的筹码并掩盖起来。游戏开始时，所有赌徒同时亮出筹码，若有赌徒出的筹码数量为任意其他三人之和，则此人赢得这场比赛。
+
+例如，赌徒A亮出2个筹码，B亮出3，C亮出5，D亮出7，E亮出12，则E获胜，因为BCD之和为E。
+*/
+
+/*in
+包含一组数据，以 `[` 开始且以 `]` 结尾。数据包含若干个组，每个组包含一个赌徒代号（A-Z）、一个英文句号以及一个出示的金额。
+
+[ A.1 B.1 C.1 D.3 E.3 ]
+*/
+
+/*out
+获胜人员代号。
+若无人员获胜，则输出NULL；若有多个人获胜，则依照字母顺序输出人员代号，以一个空格分隔。
+
+D E
+*/
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+typedef pair<string, int> strInt;
+
+bool cmp(strInt si1, strInt si2)
+{
+	return si1.second < si2.second;
+}
+
+bool cmpA(string str1, string str2)
+{
+	return str1 < str2;
+}
+
+bool isWin(int n, vector<strInt> gambler)
+{
+	for (int i = n - 1; i >= 0; i--)
+	{
+		for (int j = i - 1; j >= 0; j--)
+		{
+			for (int k = j - 1; k >= 0; k--)
+			{
+				if (gambler[n].second == gambler[i].second + gambler[j].second + gambler[k].second)
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+int main()
+{
+	string str;
+	cin >> str;
+	vector<strInt> gambler;
+	vector<string> victory;
+	if (str != "[")
+	{
+		cout << "NULL" << endl;
+	}
+	while (cin >> str)
+	{
+		if (str == "]")
+		{
+			break;
+		}
+		for (size_t i = 0; i < str.size(); i++)
+		{
+			if (str[i] == '.')
+			{
+				strInt tmp = make_pair(str.substr(0, i), stoi(str.substr(i + 1)));
+				gambler.push_back(tmp);
+			}
+		}
+	}
+	sort(gambler.begin(), gambler.end(), cmp);
+	int min = gambler[0].second + gambler[1].second + gambler[2].second;
+	for (size_t i = 0; i < gambler.size(); i++)
+	{
+		if (gambler[i].second>=min)
+		{
+			if (isWin(i,gambler))
+			{
+				victory.push_back(gambler[i].first);
+			}
+		}
+	}
+
+	sort(victory.begin(), victory.end(), cmpA);
+	if (victory.empty())
+	{
+		cout << "NULL" << endl;
+		return 0;
+	}
+	cout << victory[0];
+	for (size_t i = 1; i < victory.size(); i++)
+	{
+		std::cout << " " << victory[i];
+	}
+	return 0;
+}
