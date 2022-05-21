@@ -1,0 +1,105 @@
+/*1052 计算肺炎传染人群
+某公司有N个员工，对于肺炎来说，熟人之间具有很高的传染可能，如果张三和李四是熟人，李四和王五是熟人，
+那么张三如果确诊肺炎，李四和王五很可能也确诊肺炎，所谓的传染群体就是所有因为熟人关系而可能被传染的人的集合，
+如果已知N个员工的熟人关系，求存在传染群体的个数
+
+输入N表明该公司有N个员工(1<=N<=100)，然后输入1个N*N的矩阵A，其矩阵内的值为0或1，以空格分割，如A[i][j]=1，
+则表明 i 和 j 是熟人关系，否则不熟，你需要计算出该公司存在的传染群体的数目
+(注意在输入中 A[i][i] 都为1，并且如果存在A[i][j]为1，则A[j][i]必为1)
+*/
+
+/*IN
+3
+1   1   0
+1   1   0
+0   0   1
+*/
+
+/*OUT
+2
+*/
+
+/*HINT
+3
+1   1   0
+1   1   0
+0   0   1
+
+该公司总共有3个员工，员工0和1是熟人关系，2只和自己熟，因此0和1是一个传染群体，2是1个传染群体，总共有2个传染群体，因此输出2
+*/
+
+#include <iostream>
+#include <vector>
+#include <string.h>
+#include <map>
+using namespace std;
+int main()
+{
+	int A[101][101];
+	int n;
+	memset(A, 0, sizeof(A));
+	int count = 0;
+	cin >> n;
+	for (size_t i = 0; i < n; i++)
+	{
+		for (size_t j = 0; j < n; j++)
+		{
+			int tmp;
+			cin >> tmp;
+			A[i][j] = tmp;
+			if (tmp == 1)
+			{
+				count++;
+			}
+		}
+	}
+
+	bool first = true;
+	bool found = false;
+
+	vector<map<int, int>> vMap;
+
+	while (count)
+	{
+		first = true;
+		for (size_t i = 0; i < n; i++)
+		{
+			for (size_t j = 0; j < n; j++)
+			{
+				if (A[i][j] == 1)
+				{
+					
+					for (size_t k = 0; k < vMap.size(); k++)
+					{
+						if (vMap[k].find(i) != vMap[k].end() || vMap[k].find(j) != vMap[k].end())
+						{
+							vMap[k][i] = 1;
+							vMap[k][j] = 1;
+							A[i][j] = 0;
+							count--;
+							found = true;
+							break;
+						}
+					}
+
+					if (first && !found)
+					{
+						map<int, int>tmp;
+						tmp[i] = 1;
+						tmp[j] = 1;
+						vMap.push_back(tmp);
+						A[i][j] = 0;
+						count--;
+						first = false;
+						continue;
+					}
+					found = false;
+
+				}
+			}
+		}
+	}
+
+
+	cout << vMap.size() << endl;
+}
