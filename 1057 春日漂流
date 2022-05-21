@@ -1,0 +1,64 @@
+/*1057 春日漂流
+某公司组织N个员工春天去漂流，员工的体重分别为X1，X2,...X[N], 每个漂流艇最多可坐2人，
+且漂流艇限重为Y，即2个人的体重不能超过Y， 已知单个员工的体重都不大于Y，如果所有员工都进行完漂流，乘坐的最少漂流艇数目是是多少？
+*/
+
+/*IN
+漂流艇限重 Y
+员工的数目 N
+N个员工的体重  X1 X2 X3 ... X[N]， 以空格分割
+
+3
+4
+3 2 2 1
+*/
+
+/*OUT
+最少的漂流艇数目
+
+3
+*/
+
+/*HINT
+限重为3，体重1和体重2的人共乘一艘，体重2的人乘第2艘，体重3的人乘第3艘，总共最少需要三艘，输出3
+*/
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+int main()
+{
+	int Y, N;
+	int X;
+	vector<int> intV;
+	cin >> Y >> N;
+	for (size_t i = 0; i < N; i++)
+	{
+		cin >> X;
+		intV.push_back(X);
+	}
+	sort(intV.begin(), intV.end());
+	int boat = 0;
+	int j = 0;
+	for (int i=N-1;i>=0;i--)
+	{
+		if (j > i)
+		{
+			break;
+		}
+		else if (i==j)
+		{
+			boat++;
+			break;
+		}
+		
+		if (intV[j]+intV[i]<=Y)
+		{
+			j++;
+			boat++;
+			continue;
+		}
+		boat++;
+	}
+	cout << boat << endl;
+}
