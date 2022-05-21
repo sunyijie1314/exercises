@@ -1,0 +1,82 @@
+/*1055 口罩运输
+最近疫情期间，滨江收到了一批口罩捐赠准备运往武汉，无奈大型运输车有限，只有一辆。
+准备运往武汉的口罩有很多箱，每一箱的体积和重量还有口罩数量是不一样的。
+运输车也有总重量和总体积的限制，请帮忙计算下如何才能一次运输最多的口罩数量。
+(假设箱子之间没有空隙，不考虑长宽高等物理限制)
+*/
+
+/*IN
+第一行包含3个整数，分别为运输车最多运输的重量M，最大运输的体积V，有口罩N箱
+接下来N行，每行是一个箱子的重量m，体积v，和口罩数量n
+（1<m<M<=1000）（1<v<V<=1000）（1<N<=30）M、V、N、m、v、n都是正整数
+
+10 10 5
+5 5 10
+5 5 20
+5 5 10
+2 3 3
+3 2 3
+*/
+
+/*OUT
+输出最多一次能运输的口罩数量
+
+30
+*/
+
+#include <iostream>
+#include <vector>
+#include <string.h>
+#include <algorithm>
+using namespace std;
+typedef pair<int, int> intPair;
+typedef pair<int, intPair>int2Pair;
+int main()
+{
+	int M, V, N;
+	cin >> M >> V >> N;
+	vector<int2Pair> pairVec;
+	for (size_t i = 0; i < N; i++)
+	{
+		int m, v, n;
+		cin >> m >> v >> n;
+		pairVec.push_back(make_pair(m, make_pair(v, n)));
+	}
+
+	int** send = new int* [1001];
+	for (size_t i = 0; i < 1001; i++)
+	{
+		send[i] = new int[1001]();
+	}
+
+	for (size_t i = 0; i < N; i++)
+	{
+		int tmpJ = pairVec[i].first;
+		int tmpK = pairVec[i].second.first;
+		int tmpN = pairVec[i].second.second;
+		for (int j = M; j >= tmpJ; j--)
+		{
+			for (int k = V; k >= tmpK; k--)
+			{
+				send[j][k] = max(send[j][k], send[j - tmpJ][k - tmpK] + tmpN);
+			}
+		}
+	}
+
+	int imax = 0;
+	for (size_t i = 1; i <= M; i++)
+	{
+		for (size_t j = 1; j <= V; j++)
+		{
+			imax = max(send[i][j], imax);
+		}
+	}
+
+	cout << imax << endl;
+	for (size_t i = 0; i < 1001; i++)
+	{
+		delete[]send[i];
+	}
+	delete[]send;
+}
+
