@@ -1,0 +1,72 @@
+/*1056 基因突变
+假设每个肺炎病毒每次发生复制时仅复制出1个新个体，且老个体不会死亡。现在有一个病毒进行复制（本体第一次复制记为第一代），
+当在第N代复制到N+1代时，其中一个病毒的基因序列发生变异，每次能够新复制出2个个体。求在第M代时，变异病毒在总群体中的百分比，
+输出固定到小数点后2位，即5%也输出5.00%，printf在输出浮点数的时候都是四舍五入，因此输出考虑四舍五入
+*/
+
+/*IN
+第一行：用例个数
+其他：每行为一个用例。一个用例包含两个数字，分别表示N与M
+
+2
+1 2
+2 4
+*/
+
+/*OUT
+比例
+
+50.00%
+33.33%
+*/
+
+/*HINT
+以第二个用例举例，假设X为正常病毒，Y为突变病毒，则：
+1. X
+2. X X
+3. X X X Y
+4. X X X X X X Y Y Y
+
+因此比例为 3 / 9 = 33.33%
+*/
+#include <iostream>
+#include <iomanip>
+using namespace std;
+int main()
+{
+	int n;
+	cin >> n;
+	for (size_t i = 0; i < n; i++)
+	{
+		int N, M;
+		cin >> N >> M;
+		int simple = 1;
+		if (M <= N)
+		{
+			cout << "0.00%" << endl;
+			continue;
+		}
+		for (size_t j = 0; j < N; j++)
+		{
+			simple *= 2;
+		}
+		simple -= 1;
+		int notSimple = 1;
+		for (size_t j = N + 1; j < M; j++)
+		{
+			simple *= 2;
+			notSimple *= 3;
+		}
+		int percent = notSimple * 100000 / (notSimple + simple);
+		if (percent % 10 >= 5)
+		{
+			percent = percent / 10 + 1;
+		}
+		else
+		{
+			percent /= 10;
+		}
+
+		cout << setiosflags(ios::fixed) << setprecision(2) << 1.0 * percent / 100 << "%" << endl;
+	}
+}
