@@ -1,0 +1,84 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+vector<pair<char, string>> csVec = {
+	{'0',"0000"},
+	{'1',"0001"},
+	{'2',"0010"},
+	{'3',"0011"},
+	{'4',"0100"},
+	{'5',"0101"},
+	{'6',"0110"},
+	{'7',"0111"},
+	{'8',"1000"},
+	{'9',"1001"},
+	{'a',"1010"},
+	{'b',"1011"},
+	{'c',"1100"},
+	{'d',"1101"},
+	{'e',"1110"},
+	{'f',"1111"}
+};
+
+string get2nd(char a)
+{
+	for (size_t i = 0; i < csVec.size(); i++)
+	{
+		if (csVec[i].first == a)
+		{
+			return csVec[i].second;
+		}
+	}
+	return "";
+}
+
+char getNum(string str)
+{
+	for (size_t i = 0; i < csVec.size(); i++)
+	{
+		if (csVec[i].second == str)
+		{
+			return csVec[i].first;
+		}
+	}
+	return 'g';
+}
+
+int main()
+{
+	int n;
+	cin >> n;
+	for (size_t i = 0; i < n; i++)
+	{
+		string str;
+		cin >> str;
+		string second;
+		for (size_t j = 0; j < str.size(); j++)
+		{
+			second += get2nd(str[j]);
+		}
+		string newNum;
+		for (size_t j = 0; j < second.size(); j++)
+		{
+			char tmp = second[j] == '0' ? '1' : '0';
+			newNum = tmp + newNum;
+		}
+		string output;
+		string tmp;
+		for (size_t j = 0; j < newNum.size(); j++)
+		{
+			if (j == 0 || j % 4 != 0)
+			{
+				tmp += newNum[j];
+				continue;
+			}
+			output += getNum(tmp);
+			tmp.clear();
+			tmp += newNum[j];
+		}
+		output += getNum(tmp);
+		cout << output << endl;
+	}
+}
