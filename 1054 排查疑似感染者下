@@ -1,0 +1,78 @@
+/*HINT
+样例输入的第一行表示总人数10名，感染人数3名，存在密切接触关系表5份。
+第二行开始表示编号为1、3、5的人员为确诊感染。
+接下来的5行表示密切接触关系表。
+这里的编号6人员不属于疑似感染者，因为6属于1的第三层接触者。
+*/
+
+#include <iostream>
+#include <map>
+#include <vector>
+using namespace std;
+
+map<int, vector<int>>mVec;
+int main()
+{
+	map<int, int> infected;
+	map<int, int>senInfected;
+	map<int, int>thiInfected;
+	int N, M, T;
+	int tmp, tmp1;
+	cin >> N >> M >> T;
+	for (size_t i = 0; i < M; i++)
+	{
+		cin >> tmp;
+		infected[tmp] = 0;
+	}
+	for (size_t i = 0; i < T; i++)
+	{
+		cin >> tmp >> tmp1;
+		mVec[tmp].push_back(tmp1);
+		mVec[tmp1].push_back(tmp);
+	}
+	for (auto it = infected.begin(); it != infected.end(); it++)
+	{
+		if (mVec.find(it->first) != mVec.end())
+		{
+			for (size_t i = 0; i < mVec[it->first].size(); i++)
+			{
+				if (infected.find(mVec[it->first][i]) == infected.end())
+				{
+					senInfected[mVec[it->first][i]] = 0;
+				}
+			}
+		}
+	}
+
+	for (auto it = senInfected.begin(); it != senInfected.end(); it++)
+	{
+		if (mVec.find(it->first) != mVec.end())
+		{
+			for (size_t i = 0; i < mVec[it->first].size(); i++)
+			{
+				if (infected.find(mVec[it->first][i]) == infected.end() &&
+					senInfected.find(mVec[it->first][i]) == senInfected.end())
+				{
+					thiInfected[mVec[it->first][i]] = 0;
+				}
+			}
+		}
+	}
+
+	for (auto it = thiInfected.begin(); it != thiInfected.end(); it++)
+	{
+		senInfected[it->first] = 0;
+	}
+
+	cout << senInfected.begin()->first;
+
+	for (auto it = senInfected.begin(); it != senInfected.end(); it++)
+	{
+		if (it==senInfected.begin())
+		{
+			continue;
+		}
+		cout << " " << it->first;
+	}
+	cout << endl;
+}
