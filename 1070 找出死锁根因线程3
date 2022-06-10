@@ -1,0 +1,39 @@
+/*IN
+所有线程的堆栈信息，空行分割 ，堆栈信息字符串总大小不超过5M
+所有线程中mutex参数的3行地址内容，即gdb中输入 x /12x addresss 输出信息, 对于分析__owner 12x 长度已经足够，
+这里需要自己解析地址的内容 ，注意如果有多个线程被同一把锁锁住，则该锁的地址内容信息会重复输入
+
+Thread 4 (Thread 0x7f6ca02e2700 (LWP 183158)):
+#0  __lll_lock_wait () at ../nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S:136
+#1  0x000000368b8095d8 in _L_lock_854 () from /lib64/libpthread.so.0
+#2  0x000000368b8094a7 in __pthread_mutex_lock (mutex=0x600e20) at pthread_mutex_lock.c:61
+#3  0x000000000040078e in thread_func1 (arg=0x0) at pthread_mutex.c:15
+#4  0x000000368b807aa1 in start_thread (arg=0x7f6ca02e2700) at pthread_create.c:301
+#5  0x000000368b4e8c4d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:115
+
+Thread 3 (Thread 0x7f6c9f8e1700 (LWP 183159)):
+#0  0x000000368b4accbd in nanosleep () at ../sysdeps/unix/syscall-template.S:82
+#1  0x000000368b4acb30 in __sleep (seconds=0) at ../sysdeps/unix/sysv/linux/sleep.c:138
+#2  0x00000000004007bf in thread_func2 (arg=0x0) at pthread_mutex.c:25
+#3  0x000000368b807aa1 in start_thread (arg=0x7f6c9f8e1700) at pthread_create.c:301
+#4  0x000000368b4e8c4d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:115
+
+Thread 2 (Thread 0x7f6c9eee0700 (LWP 183160)):
+#0  __lll_lock_wait () at ../nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S:136
+#1  0x000000368b8095d8 in _L_lock_854 () from /lib64/libpthread.so.0
+#2  0x000000368b8094a7 in __pthread_mutex_lock (mutex=0x600de0) at pthread_mutex_lock.c:61
+#3  0x00000000004007eb in thread_func3 (arg=0x0) at pthread_mutex.c:33
+#4  0x000000368b807aa1 in start_thread (arg=0x7f6c9eee0700) at pthread_create.c:301
+#5  0x000000368b4e8c4d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:115
+
+Thread 1 (Thread 0x7f6ca02e4720 (LWP 183157)):
+#0  0x000000368b8082fd in pthread_join (threadid=140104520574720, thread_return=0x0) at pthread_join.c:89
+#1  0x00000000004008c8 in main (argc=1, argv=0x7ffc52ac9698) at pthread_mutex.c:60
+
+0x600e20 <mutex2>:      0x00000002      0x00000000      0x0002cb78      0x00000001
+0x600e30 <mutex2+16>:   0x00000000      0x00000000      0x00000000      0x00000000
+0x600e40 <mutex2+32>:   0x00000000      0x00000000      0x00000000      0x00000000
+0x600de0 <mutex1>:      0x00000002      0x00000000      0x0002cb76      0x00000001
+0x600df0 <mutex1+16>:   0x00000000      0x00000000      0x00000000      0x00000000
+0x600e00 <mutex1+32>:   0x00000000      0x00000000      0x00000000      0x00000000
+*/
