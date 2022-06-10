@@ -1,0 +1,150 @@
+#include <iostream>
+#include <string>
+#include <map>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+string ten2sixteen(string ten)
+{
+	string str;
+	int a = stoi(ten);
+	while (a)
+	{
+		int tmp = a % 16;
+		char c = tmp >= 10 ? tmp - 10 + 'a' : tmp + '0';
+		str = c + str;
+		a /= 16;
+	}
+
+	for (int i = str.size(); i < 8; i++)
+	{
+		str = "0" + str;
+	}
+	str = "0x" + str;
+	return str;
+}
+
+
+
+int main()
+{
+	string str;
+	map<string, pair<string, string>> ssm;
+	vector<pair<string, string>> ssm2;
+	while (1)
+	{
+		string strpid;
+		string strpidten;
+		string tmp;
+		cin >> str;
+		if (str == "(LWP")
+		{
+			cin >> str;
+
+			strpidten = str.substr(0, str.find(")"));
+			strpid = ten2sixteen(strpidten);
+			while (true)
+			{
+				cin >> str;
+				if (str == "__pthread_mutex_lock")
+				{
+					cin >> str;
+					ssm[strpid] = make_pair(str.substr(7, 8), strpidten);
+					break;
+				}
+				if (str == "(LWP")
+				{
+					cin >> str;
+					strpidten = str.substr(0, str.find(")"));
+					strpid = ten2sixteen(strpidten);
+					continue;
+				}
+
+				if (str.size() == 8 && str[0] == '0' && str[1] == 'x')
+				{
+					tmp = str;
+					cin >> str >> str >> str >> str;
+					ssm2.push_back(make_pair(tmp, str));
+					break;
+				}
+			}
+		}
+		if (str.size() == 8 && str[0] == '0' && str[1] == 'x')
+		{
+			tmp = str;
+			cin >> str >> str >> str >> str;
+			if (str == "0x00000000")
+			{
+				continue;
+			}
+			ssm2.push_back(make_pair(tmp, str));
+		}
+
+		if (ssm.size() == ssm2.size() && ssm.size()!=0)
+		{
+			break;
+		}
+
+	}
+	map<string, string> ssm3(ssm2.begin(), ssm2.end());
+
+	vector<string> vstr;
+	for (auto it = ssm.begin(); it != ssm.end(); it++)
+	{
+		if (it->second.first == it->first)
+		{
+			cout << it->second.second << endl;
+			vstr.clear();
+			break;
+		}
+
+		if (ssm3.find(it->second.first) == ssm3.end())
+		{
+			continue;
+		}
+
+		vstr.push_back(it->second.second);
+
+		string s = ssm3[it->second.first];
+		string sf = it->first;
+		while (s != sf)
+		{
+			if (ssm.find(s) == ssm.end())
+			{
+				break;
+			}
+			if (ssm3.find(ssm[s].first) == ssm3.end())
+			{
+				break;
+			}
+			vstr.push_back(ssm[s].second);
+			s = ssm3[ssm[s].first];
+			if (vstr.size()>ssm.size())
+			{
+				break;
+			}
+			
+		}
+
+		if (s == sf)
+		{
+			break;
+		}
+		vstr.clear();
+	}
+
+	if (vstr.size() < 1)
+	{
+		return 0;
+	}
+
+	sort(vstr.begin(), vstr.end());
+	cout << vstr[0];
+	for (size_t i = 1; i < vstr.size(); i++)
+	{
+		cout << " " << vstr[i];
+	}
+	cout << endl;
+}
+
