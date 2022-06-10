@@ -1,0 +1,103 @@
+/*HINT
+rtsp://admin:@[2001:0db8:3c4d:0015:0000:0000:1a2f:1a2b]:554/cam/realmonitor?channel=1&subtype=1
+用户名为admin，密码为空所以不用输出密码，地址为[2001:0db8:3c4d:0015:0000:0000:1a2f:1a2b], 端口为554，通道为1，码流类型为1
+
+rtsp://admin:admin@10.7.6.67:554//mnt/sd/2012-07-13/001/dav/09/09.30.37-09.30.47[R][0@0][0].dav
+用户名为admin，密码为admin，地址为10.7.6.67，端口为554， 文件名称为 /mnt/sd/2012-07-13/001/dav/09/09.30.37-09.30.47[R][0@0][0].dav
+
+rtsp://admin:admin@www.dahuatech.com/cam/playback?channel=1&subtype=0&starttime=2012_09_15_12_37_05&endtime=2012_09_15_18_34_14
+用户名为admin，密码为admin，地址为www.dahuatech.com，端口没有则为默认端口554，通道为1，码流类型为0，开始时间为2012_09_15_12_37_05，结束时间为2012_09_15_18_34_14
+*/
+
+#include <iostream>
+#include <string>
+using namespace std;
+int main()
+{
+	int line;
+	cin >> line;
+	for (size_t i = 0; i < line; i++)
+	{
+		string url;
+		cin >> url;
+		string user, password, ip, port, channel, type, filename, starttime, endtime;
+		url = url.substr(7);
+
+		string tmp = url.substr(0,url.find("/") + 1);
+		size_t urla = tmp.find_last_of("@");
+		size_t urlmao = tmp.find(":");
+		if (urla != string::npos)
+		{
+			user = tmp.substr(0, urlmao);
+			password = tmp.substr(urlmao + 1, urla - urlmao - 1);
+			tmp = tmp.substr(urla + 1);
+			cout << user << " ";
+			if (!password.empty())
+			{
+				cout << password << " ";
+			}
+		}
+		if (tmp[0] == '[')
+		{
+			ip = tmp.substr(0, tmp.find("]") + 1);
+			tmp = tmp.substr(tmp.find("]") + 1);
+			cout << ip << " ";
+			if (tmp[0] == ':')
+			{
+				port = tmp.substr(1, tmp.find("/") - 1);
+				cout << port << " ";
+			}
+			else
+			{
+				cout << "554 ";
+			}
+		}
+		else
+		{
+			string str = tmp.substr(0, tmp.find("/"));
+			if (str.find(":") != string::npos)
+			{
+				ip = str.substr(0, str.find(":"));
+				port = str.substr(str.find(":") + 1);
+				cout << ip << " " << port << " ";
+			}
+			else
+			{
+				ip = str;
+				cout << ip << " 554 ";
+			}
+		}
+		url = url.substr(url.find("/") + 1);
+
+		if (url.find("channel=") != string::npos)
+		{
+			channel = url.substr(url.find("channel=") + 8, url.find("&") - url.find("channel=") - 8);
+			cout << channel << " ";
+			url = url.substr(url.find("subtype="));
+			if (url.find("&") != string::npos)
+			{
+				type = url.substr(8, url.find("&") - 8);
+				cout << type << " ";
+
+				if (url.find("starttime=") != string::npos)
+				{
+					url = url.substr(url.find("starttime="));
+					starttime = url.substr(url.find("starttime=") + 10, url.find("&") - url.find("starttime=") - 10);
+					endtime = url.substr(url.find("endtime=") + 8);
+					cout << starttime << " " << endtime << endl;
+				}
+			}
+			else
+			{
+				type = url.substr(url.find("subtype=") + 8);
+				cout << type << endl;
+			}
+		}
+		else
+		{
+			filename = url;
+			cout << filename << endl;
+		}
+
+	}
+}
