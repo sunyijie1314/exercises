@@ -1,0 +1,99 @@
+/*OUT
+1：发生碰撞
+0：不发生碰撞
+
+1
+1
+*/
+
+/*HINT
+以用例 (0,1) 2 D 1 (0,1) 1 D 1 2 为例：
+于坐标(0,1)处存在一个边长为2的正方形以速度1向下移动；于坐标(0,1)处存在一个边长为1的正方形以速度1向下移动。
+由于初始状态两个正方形的左边与上边重叠，因此输出1，表示发生碰撞。
+*/
+
+#include <iostream>
+#include <string>
+#include <map>
+#include <math.h>
+using namespace std;
+typedef pair<double, double>douPair;
+
+typedef struct MyRect
+{
+	douPair leftTop;
+	douPair lefBottom;
+	douPair rightTop;
+	douPair rightBottom;
+	douPair center;
+	double side;
+	char derict;
+	int speed;
+}ST_RECT;
+
+map<char, douPair> dpm = { {'U',{0,-1}},{'D',{0,1}},{'L',{-1,0}},{'R',{1,0}} };
+
+
+bool isMeet(ST_RECT re1, ST_RECT re2, double time)
+{
+	for (double i = 0; i <= time; i += 0.01 * time)
+	{
+		douPair RE1 = make_pair(re1.center.first + dpm[re1.derict].first * i * re1.speed, re1.center.second + dpm[re1.derict].second * i * re1.speed);
+		douPair RE2 = make_pair(re2.center.first + dpm[re2.derict].first * i * re2.speed, re2.center.second + dpm[re2.derict].second * i * re2.speed);
+		double sf1 = RE1.first - RE2.first;
+		double ss2 = RE1.second - RE2.second;
+		double s1 = sf1 * sf1 + ss2 * ss2;
+		if (s1 <= (re1.side + re2.side) / 2 * (re1.side + re2.side) / 2 *2 &&
+			s1 >= (re1.side - re2.side) / 2 * (re1.side - re2.side) / 2 * 2)
+		{
+			return true;
+		}
+	}
+	return false;
+
+}
+
+int main()
+{
+	int n;
+	cin >> n;
+	for (size_t i = 0; i < n; i++)
+	{
+		ST_RECT re1, re2;
+		string str;
+		cin >> str;
+		size_t f1 = str.find(',');
+		size_t f2 = str.find(')');
+
+		re1.leftTop = make_pair(stod(str.substr(1, f1 - 1)), stod(str.substr(f1 + 1, f2 - f1 - 1)));
+		cin >> re1.side >> re1.derict >> re1.speed;
+		re1.lefBottom = make_pair(re1.leftTop.first, re1.leftTop.second + re1.side);
+		re1.rightTop = make_pair(re1.leftTop.first + re1.side, re1.leftTop.second);
+		re1.rightBottom = make_pair(re1.leftTop.first + re1.side, re1.leftTop.second + re1.side);
+		re1.center = make_pair(re1.leftTop.first + re1.side / 2, re1.leftTop.second + re1.side / 2);
+
+		cin >> str;
+		f1 = str.find(',');
+		f2 = str.find(')');
+		re2.leftTop = make_pair(stod(str.substr(1, f1 - 1)), stod(str.substr(f1 + 1, f2 - f1 - 1)));
+		cin >> re2.side >> re2.derict >> re2.speed;
+		re2.lefBottom = make_pair(re2.leftTop.first, re2.leftTop.second + re2.side);
+		re2.rightTop = make_pair(re2.leftTop.first + re2.side, re2.leftTop.second);
+		re2.rightBottom = make_pair(re2.leftTop.first + re2.side, re2.leftTop.second + re2.side);
+		re2.center = make_pair(re2.leftTop.first + re2.side / 2, re2.leftTop.second + re2.side / 2);
+
+		double time;
+		cin >> time;
+		if (isMeet(re1, re2, time))
+		{
+			cout << 1 << endl;
+		}
+		else
+		{
+			cout << 0 << endl;
+		}
+
+	}
+
+
+}
