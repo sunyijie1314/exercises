@@ -1,0 +1,25 @@
+成员 含义
+__lock 资源竞争引用计数，不为0则再加锁则被锁住
+__count 递归锁的递归次数，递归锁有用
+__owner 获取当前互斥锁的进程或者线程ID，可以用gdb进入对应的线程，看看是哪个线程持有互斥锁
+__nusers 锁的使用者个数，lock成功 + 1，unlock成功 - 1，更新owner时nusers才会 + 1
+__kind 锁类型，普通锁，递归锁，纠错锁，自适应锁等，
+PTHREAD_MUTEX_TIMED_NP, 快速互斥锁，当一个线程加锁后，其余请求锁的线程形成等待队列，在解锁后按优先级获得锁
+PTHREAD_MUTEX_RECURSIVE_NP, 递归锁，允许同一线程对同一锁成功获得多次。当然也要解锁多次。其余线程在解锁时重新竞争。
+PTHREAD_MUTEX_ERRORCHECK_NP, 检测锁，若同一线程请求同一锁，返回EDEADLK，否则与PTHREAD_MUTEX_TIMED_NP动作相同
+PTHREAD_MUTEX_ADAPTIVE_NP自适应锁，解锁后所有线程重新竞争
+__spins PHTREAD_ADAPTIVE_MUTEX_INITIALIZER_NP类型的锁的自旋计数   自适应锁
+__list 锁链表，和robust futex 实现有关
+__size 断言__data的字节要小于__size，这个union在不同位数计算机上的最大空间不同，例如在64位计算机上的最大的空间是40个字节
+__align long int字节对齐
+
+3) 找到该地址中的 __owner 成员信息, 表示该锁资源目前线程拥有者，正在等待该锁资源释放
+(gdb) p* (pthread_mutex_t*)0x600e20
+$1 = { __data = {__lock = 2, __count = 0, __owner = 183160, __nusers = 1, __kind = 0, __spins = 0, __list = {__prev = 0x0,
+	  __next = 0x0}}, __size = "\002\000\000\000\000\000\000\000x\313\002\000\001", '\000' <repeats 26 times>, __align = 2 }
+	(gdb)p * (pthread_mutex_t*)0x600de0
+	$2 = { __data = {__lock = 2, __count = 0, __owner = 183158, __nusers = 1, __kind = 0, __spins = 0, __list = {__prev = 0x0,
+		  __next = 0x0}}, __size = "\002\000\000\000\000\000\000\000v\313\002\000\001", '\000' <repeats 26 times>, __align = 2 }
+	4) 分析锁占用关系，得到死锁产生的根因线程，然后分析代码进行修复
+	因为 183158 线程在等待 183160 线程，而183160线程在等待 183158 线程，这2个线程互相等待导致死锁
+*/
