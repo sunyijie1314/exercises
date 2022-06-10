@@ -1,0 +1,28 @@
+4 除了用户名和密码都有的情况外，可以用户名和密码都没有，例如(rtsp://10.7.6.67:554/cam/realmonitor?channel=1&subtype=1)，此时用户名和密码是为空，
+  可以用户名有，密码没有，例如(rtsp://admin:@10.7.6.67:554/cam/realmonitor?channel=1&subtype=1), 此时密码为空
+  但是不会出现用户名没有，密码有的情况
+5 端口可以没有，例如(rtsp://admin:admin123@10.7.6.67/cam/realmonitor?channel=1&subtype=1), 此时端口为554
+6 大华URL格式中的资源信息字段<channelNo>,<typeNo>,<filename>,<starttime>,<endtime> 没有缺省的情况，各字段顺序不会变动，
+除<filename>外，<channelNo>,<typeNo>，<starttime>,<endtime>无特殊字符，除了资源信息外，无其他冗余字段
+*/
+
+/*IN
+输入一个数字，表明需要解析的url数目，接下来N行，每一行表示1个符合大华设备URL格式的URL
+
+3
+rtsp://admin:@[2001:0db8:3c4d:0015:0000:0000:1a2f:1a2b]:554/cam/realmonitor?channel=1&subtype=1
+rtsp://admin:admin@10.7.6.67:554//mnt/sd/2012-07-13/001/dav/09/09.30.37-09.30.47[R][0@0][0].dav
+rtsp://admin:admin@www.dahuatech.com/cam/playback?channel=1&subtype=0&starttime=2012_09_15_12_37_05&endtime=2012_09_15_18_34_14
+*/
+
+/*OUT
+按顺序输出上面N个url的解析结果，每一行表示一个URL的解析结果，需要输出其用户名 密码 服务地址 端口 (信息间以空格分割)
+如果该URL是监视，还需要在端口后面追加输出channelNo(通道信息)和typeNo(码流类型)
+如果该URL是按文件回放，还需要在端口后面追加输出filename (含目录路径的文件名称)
+如果该URL是按时间回放，还需要在端口后面追加输出channelNo(通道信息)，typeNo(码流类型)，starttime(开始时间)，endtime(结束时间)
+如果用户名或密码为空时，则不输出对应信息
+
+admin [2001:0db8:3c4d:0015:0000:0000:1a2f:1a2b] 554 1 1
+admin admin 10.7.6.67 554 /mnt/sd/2012-07-13/001/dav/09/09.30.37-09.30.47[R][0@0][0].dav
+admin admin www.dahuatech.com 554 1 0 2012_09_15_12_37_05 2012_09_15_18_34_14
+*/
