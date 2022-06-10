@@ -1,0 +1,24 @@
+/*1066 URL解析
+Rtsp协议是安防行业常用的取流协议，一般使用VLC工具来验证Rtsp协议是否实现正确
+根据RFC1808规范文档, URL由协议，网络主机信息，资源路径，参数信息，查询信息，片段信息组成
+<scheme>://<net_loc>/<path>;<params>?<query>#<fragment>
+大华设备的URL格式及示例如下(URL携带账户和密码是为了鉴权):
+监视流
+rtsp://<username>:<password>@<ip>:<port>/cam/realmonitor?channel=<channelNo>&subtype=<typeNo>
+rtsp://admin:admin@10.7.6.67:554/cam/realmonitor?channel=1&subtype=0
+rtsp://admin:admin@10.7.6.67:554/cam/realmonitor?channel=1&subtype=main (typeNo也支持字符串，下面回放也相同)
+按文件回放
+rtsp://<username>:<password>@<ip>:<port>/<filename>
+rtsp://admin:admin@10.7.6.67:554//mnt/sd/2012-07-13/001/dav/09/09.30.37-09.30.47[R][0@0][0].dav
+按时间回放
+rtsp://<username>:<password>@<ip>:<port>/cam/playback?channel=<channelNo>&subtype=<typeNo>&starttime=<starttime>&endtime=<endtime>
+rtsp://admin:admin@10.44.200.8:554/cam/playback?channel=1&subtype=0&starttime=2012_09_15_12_37_05&endtime=2012_09_15_18_34_14
+
+在测试过程中，发现VLC客户端对密码或文件名称中携带@字符时支持不是很好,导致拉流失败，现在，请你实现一个URL解析函数，
+输出用户名，密码，网络主机ip，端口，请求的资源信息，已知URL有以下约束
+1 用户名和密码不会出现'/', 用户名不会出现':'
+2 用户名和密码长度都<=50, URL总长度小于2048
+3 网络主机地址可以为IPV4(xxx.xxx.xxx.xxx)，例如rtsp://admin:admin@10.7.6.67:554/cam/realmonitor?channel=1&subtype=1
+	也可以为IPV6(格式[XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX]), 例如rtsp://admin:admin@[2001:0db8:3c4d:0015:0000:0000:1a2f:1a2b]:554/cam/realmonitor?channel=1&subtype=1
+	也可以为域名，为域名时， 域名用字母（A-Z，a-z，大小写等价）、数字（0-9）和连接符（-）组成，连接符（-）不能作为域名的开头或结尾字符, 各级域名之间用实点（.）连接，
+	例如rtsp://admin:admin@www.dahuatechrtsp.com:554/cam/realmonitor?channel=1&subtype=1
