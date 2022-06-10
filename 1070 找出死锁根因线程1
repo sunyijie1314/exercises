@@ -1,0 +1,53 @@
+/*1070 找出死锁根因线程
+死锁是比较常见的问题，其原因主要有2个及以上线程加锁顺序不当，导致线程A等待线程B，而线程B又等待线程A导致这2个线程都卡住，无法执行下去，还有一类原因是在同一线程中多次加锁未释放导致本线程卡住，包括异常分支处理不当，在函数调用前已经加过该锁，而本函数内部又尝试进行加锁。死锁最常见的定位方法是通过gdb方式进行调试
+方法如下(以linux x64平台为例):
+1) gdb attach 进程id, 通过apply all bt 命令打出所有堆栈
+  (gdb) thread apply all bt
+Thread 4 (Thread 0x7f6ca02e2700 (LWP 183158)):
+#0  __lll_lock_wait () at ../nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S:136
+#1  0x000000368b8095d8 in _L_lock_854 () from /lib64/libpthread.so.0
+#2  0x000000368b8094a7 in __pthread_mutex_lock (mutex=0x600e20) at pthread_mutex_lock.c:61
+#3  0x000000000040078e in thread_func1 (arg=0x0) at pthread_mutex.c:15
+#4  0x000000368b807aa1 in start_thread (arg=0x7f6ca02e2700) at pthread_create.c:301
+#5  0x000000368b4e8c4d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:115
+
+Thread 3 (Thread 0x7f6c9f8e1700 (LWP 183159)):
+#0  0x000000368b4accbd in nanosleep () at ../sysdeps/unix/syscall-template.S:82
+#1  0x000000368b4acb30 in __sleep (seconds=0) at ../sysdeps/unix/sysv/linux/sleep.c:138
+#2  0x00000000004007bf in thread_func2 (arg=0x0) at pthread_mutex.c:25
+#3  0x000000368b807aa1 in start_thread (arg=0x7f6c9f8e1700) at pthread_create.c:301
+#4  0x000000368b4e8c4d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:115
+
+Thread 2 (Thread 0x7f6c9eee0700 (LWP 183160)):
+#0  __lll_lock_wait () at ../nptl/sysdeps/unix/sysv/linux/x86_64/lowlevellock.S:136
+#1  0x000000368b8095d8 in _L_lock_854 () from /lib64/libpthread.so.0
+#2  0x000000368b8094a7 in __pthread_mutex_lock (mutex=0x600de0) at pthread_mutex_lock.c:61
+#3  0x00000000004007eb in thread_func3 (arg=0x0) at pthread_mutex.c:33
+#4  0x000000368b807aa1 in start_thread (arg=0x7f6c9eee0700) at pthread_create.c:301
+#5  0x000000368b4e8c4d in clone () at ../sysdeps/unix/sysv/linux/x86_64/clone.S:115
+
+Thread 1 (Thread 0x7f6ca02e4720 (LWP 183157)):
+#0  0x000000368b8082fd in pthread_join (threadid=140104520574720, thread_return=0x0) at pthread_join.c:89
+#1  0x00000000004008c8 in main (argc=1, argv=0x7ffc52ac9698) at pthread_mutex.c:60
+
+2) 找到含有__pthread_mutex_lock 函数的栈(上面红色行部分)，拿到mutex参数，mutex 参数为pthread_mutex_t *类型, 其成员及含义如下：
+typedef union
+{
+  struct __pthread_mutex_s
+  {
+	int __lock;
+	unsigned int __count;
+	int __owner;
+	// KIND must stay at this position in the structure to maintain
+	// binary compatibility.
+int __kind;
+unsigned int __nusers;
+__extension__ union
+{
+	int __spins;
+	__pthread_slist_t __list;
+};
+  } __data;
+  char __size[__SIZEOF_PTHREAD_MUTEX_T];
+  long int __align;
+} pthread_mutex_t;
