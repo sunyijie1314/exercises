@@ -1,0 +1,54 @@
+N:C57978E07AA992C72E1E6922A2C58EBB1C95BEB9E7D48F5D479AE301D83505064B03A344CF92A61A18A79608435BFE540E24EB56554AB0552
+FDB2487679A547C4126C1F72B25797F782C9D60B2C5734481DF007D5FA7AC9DCE0CFED1E32EC955037E50B5CF45653C395E74898C9B404DFF63
+CF469E4A2D6C54AB0EC685A95FDC92DE850A188E7296601F3E5C643F8D46C2364EBF2B7E4F7587862F39583EC2EECF2E50D785D16BCEE9FD1B3
+2F2E351E971263F0584A9F3719C6F82B03A3F9E2CA726658D2A6E40E872073E4B90F1AFB59EB7EAC174BFAAEFDF9B17372BEEBA1646E195A9B4
+F4CF83AB2A324B7571FCE0D4EEEBB313BD8BF51E9312C8A6C0D0DF,E:010001
+
+2
+1943 761 995
+1943 17 34
+*/
+
+/*OUT
+每一行对应一个用例结果，表示解密后的原值x。
+
+34
+995
+*/
+
+/*HINT
+以第二行为例，加密值y=995，n=1943，d=761，那么解密值计算公式为：
+x = (y^d Mod n)，即先计算995的761次方，结果对1943取模，最终结果为34。
+
+
+另，计算y^d时，存在快速幂运算方法，先将d=761分解为1+8+16+32+64+128+512，即2^x累加，那么：
+y^d = y^(1+8+16+32+64+128+512)，即y^1 * y^8 * y^16 * y^32 * y^64 * y^128 * y^512，又：
+y^512 = (y^256)^2 = ((y^128)^2)^2……，通过该算法可以快速得到幂运算结果。
+(仅供参考，也可以采用其它更优解)
+*/
+#include <iostream>
+using namespace std;
+
+int getMod(int y, int n, int d)
+{
+	int result = 1;
+	while (d)
+	{
+		result = result * y % n;
+		d--;
+	}
+	return result;
+}
+
+int main()
+{
+	int line;
+	cin >> line;
+	for (int i = 0; i < line; i++)
+	{
+		int y, n, d;
+		cin >> n >> d >> y;
+		cout << getMod(y, n, d) << endl;
+
+	}
+}
