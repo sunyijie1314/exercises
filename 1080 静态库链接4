@@ -1,0 +1,46 @@
+#include <iostream>
+#include <set>
+#include <vector>
+#include <string>
+using namespace std;
+int main()
+{
+	set<string> reaMap;
+	set<string> useMap;
+	int N;
+	cin >> N;
+	for (size_t i = 0; i < N / 2; i++)
+	{
+		string str;
+		int n;
+		cin >> n;
+		for (size_t j = 0; j < n; j++)
+		{
+			cin >> str;
+			if (useMap.find(str)!=useMap.end())
+			{
+				useMap.erase(useMap.find(str));
+				reaMap.insert(str);
+			}
+		}
+
+
+		cin >> n;
+		for (size_t j = 0; j < n; j++)
+		{
+			cin >> str;
+			if (reaMap.find(str)==reaMap.end())
+			{
+				useMap.insert(str);
+			}
+		}
+	}
+	if (useMap.size())
+	{
+		cout << "false" << endl;
+	}
+	else
+	{
+		cout << "true" << endl;
+	}
+}
