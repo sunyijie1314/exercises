@@ -1,0 +1,138 @@
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+typedef struct tree
+{
+	string sn;
+	string str;
+	struct tree* left;
+	struct tree* right;
+}TREE;
+
+int n = 0;
+vector<string> strv;
+void postOrder(TREE* node)
+{
+	if (node == NULL)
+	{
+		return;
+	}
+	if (node->left != NULL)
+	{
+		postOrder(node->left);
+	}
+	if (node->right != NULL)
+	{
+		postOrder(node->right);
+	}
+	n++;
+	string s = "S" + to_string(n);
+	node->sn = s;
+	if (node->str != "+" &&
+		node->str != "-" &&
+		node->str != "*" &&
+		node->str != "/" &&
+		node->str != "=")
+	{
+		cout << "S" << n << ": " << node->str << endl;
+	}
+	else
+	{
+		cout << "S" << n << ": " << node->str << " " << node->left->sn << " " << node->right->sn << endl;
+	}
+
+}
+
+int main()
+{
+	string str;
+	bool afterEq = false;
+	TREE* head = NULL;
+	TREE* start = NULL;
+	TREE* tmp = NULL;
+	int lastSymbol = 0;//0 没遇到符号 1 +或- 2 *或/ 3 =
+	while (cin >> str)
+	{
+		if (str == "+" || str == "-")
+		{
+			if (NULL == tmp)
+			{
+				tmp = new TREE();
+			}
+			tmp->str = str;
+			tmp->left = start;
+			start = NULL;
+			lastSymbol = 1;
+			continue;
+		}
+		else if (str == "*" || str == "/")
+		{
+			if (NULL == tmp)
+			{
+				tmp = new TREE();
+			}
+			if (1 == lastSymbol)
+			{
+				tmp->str = start->right->str;
+				start->right->str = str;
+				start->right->left = tmp;
+				tmp = start;
+			}
+			else
+			{
+				tmp->str = str;
+				tmp->left = start;
+			}
+			start = NULL;
+			lastSymbol = 2;
+			continue;
+		}
+		else if (str == "=")
+		{
+			if (NULL == head)
+			{
+				head = new TREE();
+			}
+			head->str = str;
+			head->left = start;
+			start = NULL;
+			tmp = NULL;
+			lastSymbol = 0;
+			continue;
+		}
+
+		if (NULL == start)
+		{
+			start = new TREE();
+		}
+		start->str = str;
+		if (lastSymbol == 1 || lastSymbol == 2)
+		{
+			TREE* tmpStart = tmp;
+			while (tmp->right != NULL)
+			{
+				tmp = tmp->right;
+			}
+			tmp->right = start;
+			start = tmpStart;
+		}
+		tmp = NULL;
+
+		if (cin.get() == '\n')
+		{
+			break;
+		}
+	}
+	if (NULL != head)
+	{
+		head->right = start;
+	}
+	else
+	{
+		head = start;
+	}
+	postOrder(head);
+
+}
