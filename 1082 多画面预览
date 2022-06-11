@@ -1,0 +1,88 @@
+/*1082 多画面预览
+在IVSS设备上，预览界面上可以开启多个窗口进行预览。
+每个预览窗口可以当做一个播放器，每个播放器播放一路视频。
+和window的窗口类似的，每个窗口都有一个上下的关系，我们称之为zorder，简称Z序。
+我们设定Z序值越大，窗口处在越上层，下层窗口会被上层遮挡。
+IVSS预览界面开发过程中还需要进行目标框绘制，在每个预览窗口上绘制目标框，因为一些技术原因，绘制目标框时需要关心窗口的遮挡情况。
+*/
+
+/*IN
+第一行是一个正整数表示预览窗口数量，n（0<n<=128）
+接下来n行是5个正整数z x y w h，表示窗口的z序、左上角坐标和宽高（单位都是像素，不考虑超出屏幕分辨率的情况，屏幕分辨率宽高都小于10000）
+z的值分别是1到n，但不是按顺序的。
+
+4
+3 0 0 100 100
+2 100 100 100 100
+1 20 20 100 100
+4 30 30 100 100
+*/
+
+/*OUT
+输出z序为1的窗口没有被遮挡的面积（为判题方便，这里就要求输出面积）
+
+400
+*/
+
+#include <iostream>
+#include <vector>
+#include <set>
+using namespace std;
+
+typedef struct ReInfo
+{
+	int x;
+	int y;
+	int w;
+	int h;
+	int z;
+}REINFO;
+
+typedef pair<int, int> intPair;
+int main()
+{
+	int N;
+	vector<REINFO> riv;
+	vector<intPair> siv;
+	set<intPair> si;
+	REINFO stRe1;
+	cin >> N;
+	for (size_t i = 0; i < N; i++)
+	{
+		REINFO stRe;
+		cin >> stRe.z >> stRe.x >> stRe.y >> stRe.w >> stRe.h;
+		if (stRe.z == 1)
+		{
+			stRe1 = stRe;
+		}
+		else
+		{
+			riv.push_back(stRe);
+		}
+	}
+
+	int left = stRe1.x + stRe1.w;
+	int bottom = stRe1.y + stRe1.h;
+	for (size_t i = 0; i < riv.size(); i++)
+	{
+		int maxx = riv[i].w + riv[i].x;
+		int maxy = riv[i].h + riv[i].y;
+		for (size_t j = riv[i].x; j < maxx; j++)
+		{
+			if (j<stRe1.x || j>=left)
+			{
+				continue;
+			}
+			for (size_t k = riv[i].y; k < maxy; k++)
+			{
+				if (k<stRe1.y || k>=bottom)
+				{
+					continue;
+				}
+				si.insert(make_pair(j, k));
+			}
+		}
+	}
+
+	cout << stRe1.w * stRe1.h - si.size() << endl;
+}
