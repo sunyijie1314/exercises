@@ -1,0 +1,27 @@
+/*OUT
+三地址码表示的中间代码，多行，临时变量以D.1/D.2/D.3...顺序命名。
+变量名与运算符间添加一个空格分隔。
+
+D.1 = a + b
+D.2 = c + b
+D.3 = b * D.2
+D.4 = D.3 * d
+D.5 = D.4 / e
+D.6 = D.1 - D.5
+*/
+
+/*HINT
+从输入中，以空格为分隔符，逐个提取token示例代码：
+	char buf[1024] = {0};
+	while (EOF != scanf("%s", buf))
+	{
+	   // XXXX
+	}
+先构建语法表达式树，再输出中间代码，本题是1078: 编译原理系列-语法分析的延伸。
+对本题目有疑问的可lync联系出题者杨世增，本人在线答疑。
+*/
+#include <iostream>
+#include <string>
+#include <vector>
+#include <stack>
+using namespace std;
