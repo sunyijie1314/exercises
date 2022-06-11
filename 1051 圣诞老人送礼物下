@@ -1,0 +1,95 @@
+int main()
+{
+	drop = 100000000;
+	costTime = 10001;
+	memset(map, -1, sizeof(map));
+	memset(bMap, false, sizeof(bMap));
+	cin >> n >> m;
+	string str;
+	for (size_t i = 0; i < m; i++)
+	{
+		cin >> str;
+		for (size_t j = 0; j < m; j++)
+		{
+			map[i][j] = str[j];
+		}
+	}
+	bMap[0][0] = true;
+	//dfs(0, 0, 0, 0);
+	intStack.push(make_pair(0, 0));
+	long long cost[101][101];
+	int step[101][101];
+	memset(cost, 100000000, sizeof(cost));
+	memset(step, 0, sizeof(step));
+	bool insert = false;
+	for (size_t i = 0; i < 101; i++)
+	{
+		for (size_t j = 0; j < 101; j++)
+		{
+			cost[i][j] = 100000000;
+		}
+	}
+	cost[0][0] = 0;
+
+	while (!intStack.empty())
+	{
+		pair<int, int>tmp = intStack.top();
+		intStack.pop();
+		int first = tmp.first;
+		int second = tmp.second;
+		for (size_t i = 0; i < 4; i++)
+		{
+			int xTmp = first + X[i];
+			int yTmp = second + Y[i];
+			if (xTmp < 0 || yTmp < 0 || xTmp >= m || yTmp >= m)
+			{
+				continue;
+			}
+			if (map[xTmp][yTmp] == '*')
+			{
+				continue;
+			}
+
+			if (cost[first][second] + map[xTmp][yTmp] - '0' > cost[xTmp][yTmp])
+			{
+				continue;
+			}
+			if (cost[first][second] + map[xTmp][yTmp] - '0' == cost[xTmp][yTmp])
+			{
+				if (step[xTmp][yTmp] > step[first][second] + 1)
+				{
+				}
+				else
+				{
+					continue;
+				}
+			}
+
+			if (map[xTmp][yTmp] != 'E')
+			{
+				if (cost[first][second] + map[xTmp][yTmp] - '0' > cost[m - 1][m - 1] - 21)
+				{
+					continue;
+				}
+				if (cost[first][second] + map[xTmp][yTmp] - '0' == cost[xTmp][yTmp])
+				{
+					if (step[xTmp][yTmp] >= step[m - 1][m - 1])
+					{
+						continue;
+					}
+				}
+			}
+
+			cost[xTmp][yTmp] = cost[first][second] + map[xTmp][yTmp] - '0';
+			step[xTmp][yTmp] = step[first][second] + 1;
+			if (map[xTmp][yTmp] == 'E')
+			{
+				continue;
+			}
+			intStack.push(make_pair(xTmp, yTmp));
+		}
+	}
+
+	cout << n - cost[m-1][m-1]+21 << " " << step[m-1][m-1] << endl;
+}
+
