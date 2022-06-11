@@ -1,0 +1,45 @@
+/*HINT
+一个结构化相当于2个人脸检测
+一个人脸相当于2个通用行为分析
+以通用行为分析做为最小能力单位，则结构化、人脸检测、通用行为分析的能力分别为：4、2、1；单卡的能力为16。
+样例中5 objectDetect objectDetect objectDetect FaceDetection Normal已经使用了15个能力，还剩1个能力无法开启人脸。需要把一个通用行为分析移到其他卡上。
+*/
+
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+map<string, int> cap = { {"Normal",1},{"FaceDetection",2},{"ObjectDetect",4} };
+map<int, string> recap = { {1, "Normal"},{2, "FaceDetection"},{4, "ObjectDetect"} };
+string need;
+vector<pair<vector<string>, int>>vpvsi;
+int num = 0;
+
+int vfind(vector<string> vstr, string str)
+{
+	int count = 0;
+	for (size_t i = 0; i < vstr.size(); i++)
+	{
+		if (vstr[i] == str)
+		{
+			count++;
+		}
+	}
+	return count;
+}
+
+bool cmp(pair<vector<string>, int> p1, pair<vector<string>, int>p2)
+{
+	if (p1.second == p2.second)
+	{
+		return p1.first.size() > p2.first.size();
+	}
+	return p1.second < p2.second;
+}
+
+bool cmp1(string str1, string str2)
+{
+	return cap[str1] > cap[str2];
+}
