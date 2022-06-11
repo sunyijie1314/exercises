@@ -1,0 +1,32 @@
+/*1076 智能调度
+在IVSS中有多张59A卡做智能，59A上只做智能，任务由主控进行分配。
+一般每张卡的能力有限，后端设备以每张卡做多少路智能来描述一个算法的开销或能力。
+目前IVSS上有三大类智能：人脸检测、通用行为分析、结构化，智能能力是一卡8路、一卡16路、1卡4路，
+因为每种智能能力不相同，所以再切换过程中难免出现，所有卡的总能力足够但是每一张卡都无法开启智能的情况。
+*/
+
+/*IN
+第一行输入n type表示由n张卡，当前要开启智能type
+接下来n行每一行描述一张卡已经开启的智能情况
+每行第一个整数c表示当前卡开启了多少路智能，接下来c个字符串表示开启了哪种智能
+
+
+FaceDetection   表示人脸检测
+objectDetect    表示结构化
+Normal    表示通用行为分析
+
+
+4 FaceDetection
+4 ObjectDetect ObjectDetect ObjectDetect ObjectDetect
+4 ObjectDetect ObjectDetect ObjectDetect ObjectDetect
+5 ObjectDetect ObjectDetect ObjectDetect FaceDetection Normal
+5 ObjectDetect ObjectDetect ObjectDetect FaceDetection Normal
+*/
+
+/*OUT
+输出最少进行几次调度才能开启智能
+把其中一路智能分析从一张卡移到另一张卡上算一次调度，每次调度要保证调度完后所有卡的智能都能正常功能（智能能力不能超过单卡的能力）。
+所有测试用例都能保证经过调度后能够开启成功
+
+1
+*/
