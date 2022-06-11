@@ -1,0 +1,58 @@
+/*1073 人脸抓拍
+在人脸检测业务中，算法会给上层上报一个人脸包围盒，上层根据包围盒进行抠图。
+但是因为算法给的包围盒比较小，人脸显示不全所以要求对包围盒进行扩大再抠图，在原有包围盒基础上宽和高都扩大1/4。
+即沿着横坐标，向左向右各扩大宽的1/8，向上向下各扩大高的1/8。
+设备上坐标统一采用8192坐标系，算法返回的坐标x和y一定在[0,8192)中，即x/y最小值为0，最大值为8191，扩大后也不能超出[0,8192)。
+*/
+
+/*IN
+输入第一行是一个正整数n
+接下来n行是x1 y1 x2 y2表示算法给的人脸包围盒左上角（x1，y1）和右下角（x2，y2）的坐标。
+
+3
+0 0 40 80
+10 10 50 90
+8151 8111 8191 8191
+*/
+
+/*OUT
+每个包围盒输出扩大后的左上角和右下角坐标
+x1 y1 x2 y2
+
+0 0 45 90
+5 0 55 100
+8146 8101 8191 8191
+*/
+
+/*HINT
+无需考虑小数点，本题测试用例中的包围盒宽/高均为4的倍数
+*/
+
+#include <iostream>
+using namespace std;
+int main()
+{
+	int n;
+	cin >> n;
+	for (size_t i = 0; i < n; i++)
+	{
+		pair<int, int>leftBottom, rightTop;
+		int a, b;
+		cin >> a >> b;
+		leftBottom = make_pair(a, b);
+		cin >> a >> b;
+		rightTop = make_pair(a, b);
+
+		int width = rightTop.first - leftBottom.first;
+		int height = rightTop.second - leftBottom.second;
+		int tmp = leftBottom.first > width / 8 ? leftBottom.first - width / 8 : 0;
+		cout << tmp;
+		tmp = leftBottom.second > height / 8 ? leftBottom.second - height / 8 : 0;
+		cout << " " << tmp;
+		tmp = rightTop.first + width / 8 > 8191 ? 8191 : rightTop.first + width / 8;
+		cout << " " << tmp;
+		tmp = rightTop.second + height / 8 > 8191 ? 8191 : rightTop.second + height / 8;
+		cout << " " << tmp << endl;
+	}
+}
+
