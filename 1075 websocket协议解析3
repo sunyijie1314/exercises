@@ -1,0 +1,94 @@
+/*HINT
+如上图，输入为82开始到45结束的数据，按照题目中的协议描述进行解析，长度为80字节，masking-key 为fe19074f，Payload data 为b1495306b1...，将数据进行掩码处理
+0xb1^0xfe=0x4f(O)
+0x49^0x19=0x50(P)
+0x53^0x07=0x54(T)
+0x06^0x4f=0x49(I)
+0xb1^0xfe=0x4f(O)
+...
+全部进行掩码处理后便为：
+OPTIONS rtsp://172.23.24.175:80/cam/realmonitor?channel=1&subtype=0
+CSeq: 1
+*/
+
+#include <iostream>
+#include <map>
+#include <string>
+using namespace std;
+
+int c2i(char c)
+{
+	if (c >= '0' && c <= '9')
+	{
+		return c - '0';
+	}
+	if (c >= 'a' && c <= 'f')
+	{
+		return c - 'a' + 10;
+	}
+	return -1;
+}
+
+int change(string str)
+{
+	return c2i(str[0]) * 16 + c2i(str[1]);
+}
+
+int main()
+{
+	string str;
+	cin >> str;
+	cin >> str;
+	int mask[4];
+	int n = change(str);
+	int bmask = n >> 7;
+	long long len = n & 0x7f;
+	
+	if (len == 126)
+	{
+		cin >> str;
+		int tmp = change(str);
+		cin >> str;
+		len = tmp << 8 | change(str);
+	}
+	else if (len == 127)
+	{
+		cin >> str;
+		long long tmp = change(str);
+		cin >> str;
+		tmp = change(str) << 8 | tmp;
+		cin >> str;
+		tmp = change(str) << 8 | tmp;
+		cin >> str;
+		len = change(str) << 8 | tmp;
+	}
+
+	if (bmask)
+	{
+		cin >> str;
+		mask[0] = change(str);
+		cin >> str;
+		mask[1] = change(str);
+		cin >> str;
+		mask[2] = change(str);
+		cin >> str;
+		mask[3] = change(str);
+	}
+
+	int i = 0;
+	while (len)
+	{
+		cin >> str;
+
+		if (bmask)
+		{
+			cout << (char)(change(str) ^ mask[i++%4]);
+		}
+		else
+		{
+			cout << (char)change(str);
+		}
+		len--;
+	}
+
+}
