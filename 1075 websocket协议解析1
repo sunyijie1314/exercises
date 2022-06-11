@@ -1,0 +1,16 @@
+/*1075 websocket协议解析
+WebSocket协议是和浏览器进行全双工通信的一个重要协议，目前大多数浏览器都支持WebSocket协议。由于这一特性，它能够应用到很多场景下，比如游戏，服务实时监控，IM，直播等，大华产品的无插件浏览技术便是基于这一协议开发的
+
+其过程如下:
+1 客户端向web服务端发起http1.1请求，请求头中带有Connection: Upgrade和Upgrade: WebSocket，要求将协议转变为WebSocket协议。
+2 服务端如果支持WebSocket协议，同样返回Connection: Upgrade头和Upgrade: WebSocke响应头。
+3 双方一旦建立连接，即可进行双向的WebSocket数据传输，就不再是HTTP数据了。
+
+websocket 传输数据格式如下：
+
+...
+
+FIN：标识是否为此消息的最后一个数据包，占 1 bit，目前总是为1
+RSV1, RSV2, RSV3: 用于扩展协议，目前总是为0，各占1bit
+Opcode：数据包类型，表明为text类型数据包或者binary类型数据包，目前总是为2，表明为binary类型数据包，占4bit
+MASK：用于标识PayloadData是否经过掩码处理。如果是1，Masking-key域的数据即是掩码密钥，用于解码PayloadData，占1bit
