@@ -1,0 +1,120 @@
+/*OUT
+根据输入以及token定义规则，顺序提取输入中所有的token，每一个token对应输出一行，输出信息中包含两部分，一是token字符串内容，二是token类型（取值1-5），中间使用空格分隔。
+
+int 1
+add 2
+( 5
+int 1
+xx 2
+, 5
+int 1
+yy 2
+) 5
+{ 5
+int 1
+zz 2
+= 4
+xx 2
++ 4
+yy 2
+; 5
+return 1
+zz 2
+; 5
+} 5
+*/
+
+/*HINT
+ 逐行取字符串代码示例:
+   while (1)
+	{
+		char buf[1024] = {0};
+		if (NULL == fgets(buf, sizeof(buf), stdin))
+		{
+			break;
+		}
+		//
+	}
+*/
+#include <iostream>
+#include <string>
+using namespace std;
+int before = 0;
+int endf = 0;
+bool printKey(string str);
+bool splitStr(string str, string c)
+{
+	size_t tmp = str.find(c);
+	if (tmp != string::npos)
+	{
+		printKey(str.substr(0, tmp));
+		printKey(c);
+		printKey(str.substr(tmp + 1));
+		return true;
+	}
+	return false;
+}
+
+bool printKey(string str)
+{
+	if (str.empty())
+	{
+		return false;
+	}
+
+	if (str == "(" || str == ")" || str == "[" || str == "]" || str == "{" || str == "}" || str == "," || str == ";")
+	{
+		cout << str << " " << 5 << endl;
+		if (str == "{")
+		{
+			before++;
+		}
+		if (str == "}")
+		{
+			endf++;
+		}
+		if (before==endf&&before!=0)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	if (str == "int"||str == "if" || str == "do" || str == "while" || str == "break" || str == "continue" || str == "for" || str == "return")
+	{
+		cout << str << " " << 1 << endl;
+		return false;
+	}
+
+	if (str == "+" || str == "-" || str == "*" || str == "/" || str == "&" || str == "|" || str == "&&" || str == "||" ||
+		str == "=" || str == "==" || str == ">" || str == ">=" || str == "<" || str == "<=" || str == "!=")
+	{
+		cout << str << " " << 4 << endl;
+		return false;
+	}
+
+	if (splitStr(str, "(") || splitStr(str, ")") || splitStr(str, "[") || splitStr(str, "]") || splitStr(str, "{") || splitStr(str, "}") || splitStr(str, ",") || splitStr(str, ";"))
+	{
+		return false;
+	}
+	
+	if ((str[0]>='a'&&str[0]<='z')|| (str[0] >= 'A' && str[0] <= 'Z')||str[0]=='_')
+	{
+		cout << str << " " << 2 << endl;
+		return false;
+	}
+	cout << str << " " << 3 << endl;
+	return false;
+}
+int main()
+{
+	while (true)
+	{
+		string str;
+		cin >> str;
+		if (printKey(str))
+		{
+			break;
+		}
+	}
+}
