@@ -1,0 +1,103 @@
+void change(string str)
+{
+	for (auto i = vpvsi.begin(); i != vpvsi.end(); i++)
+	{
+		if (cap[str] + i->second == 16)
+		{
+			vpvsi.erase(i);
+			return;
+		}
+		if (cap[str] + i->second <= 16)
+		{
+			i->second += cap[str];
+			i->first.push_back(str);
+			sort(i->first.begin(), i->first.end(), cmp1);
+			return;
+		}
+
+	}
+	int n = cap[str] - 16 + vpvsi[0].second;
+	for (auto it = vpvsi.begin(); it != vpvsi.end(); )
+	{
+		n = n > cap[str] - 16 + it->second ? cap[str] - 16 + it->second : n;
+		switch (n)
+		{
+		case 1:
+		case 2:
+		{
+			if (vfind(it->first, recap[n]))
+			{
+				num++;
+				vpvsi.erase(it++);
+				change(recap[n]);
+			}
+			break;
+		}
+		case 3:
+		{
+			if (vfind(it->first, recap[2]) && vfind(it->first, recap[1]))
+			{
+				num += 2;
+				vpvsi.erase(it++);
+				change(recap[2]);
+				change(recap[1]);
+			}
+			if (3 <= vfind(it->first, recap[1]))
+			{
+				num += 3;
+				vpvsi.erase(it++);
+				change(recap[1]);
+				change(recap[1]);
+				change(recap[1]);
+			}
+			break;
+		}
+
+		default:
+			break;
+		}
+		if (num)
+		{
+			break;
+		}
+	}
+	sort(vpvsi.begin(), vpvsi.end(), cmp);
+}
+
+
+
+int main()
+{
+	int n;
+	cin >> n >> need;
+	for (size_t i = 0; i < n; i++)
+	{
+		int c;
+		cin >> c;
+		int count = 0;
+		vector<string> vstr;
+		for (size_t j = 0; j < c; j++)
+		{
+			string str;
+			cin >> str;
+			count += cap[str];
+			vstr.push_back(str);
+		}
+
+		if (count != 16)
+		{
+			if (count + cap[need] <= 16)
+			{
+				cout << 0 << endl;
+				return 0;
+			}
+			sort(vstr.begin(), vstr.end(), cmp1);
+			vpvsi.push_back(make_pair(vstr, count));
+		}
+	}
+
+	sort(vpvsi.begin(), vpvsi.end(), cmp);
+	change(need);
+	cout << num << endl;
+
+}
