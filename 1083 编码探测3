@@ -1,0 +1,100 @@
+	bool ascii = true;
+	int sin = 0;
+	int dou = 0;
+	for (size_t i = 0; i < strv.size(); i++)
+	{
+		if (strv[i] >= "80")
+		{
+			ascii = false;
+		}
+		if (strv[i] == "00")
+		{
+			if (i % 2 == 0)
+			{
+				dou++;
+			}
+			else
+			{
+				sin++;
+			}
+		}
+
+	}
+
+	if (ascii)
+	{
+		cout << 1 << endl;
+		return 0;
+	}
+	if (dou > n * 0.1)
+	{
+		cout << 9 << endl;
+		return 0;
+	}
+	if (sin > n * 0.1)
+	{
+		cout << 10 << endl;
+		return 0;
+	}
+
+	bool utf8 = true;
+	for (size_t i = 0; i < strv.size(); i++)
+	{
+		if (strv[i] < "7E")
+		{
+			continue;
+		}
+		if (strv[i] >= "C2" && strv[i] <= "DF")
+		{
+			if (i + 1 >= strv.size())
+			{
+				utf8 = false;
+				break;
+			}
+			if (strv[i + 1] >= "80" && strv[i + 1] <= "C0")
+			{
+				i++;
+				continue;
+			}
+
+		}
+		if (strv[i] >= "E0" && strv[i] <= "F0")
+		{
+			if (i + 2 >= strv.size())
+			{
+				utf8 = false;
+				break;
+			}
+			if (strv[i + 1] >= "80" && strv[i + 1] <= "C0" &&
+				strv[i + 2] >= "80" && strv[i + 2] <= "C0")
+			{
+				i += 2;
+				continue;
+			}
+
+		}
+		if (strv[i] >= "F0" && strv[i] <= "F4")
+		{
+			if (i + 3 >= strv.size())
+			{
+				utf8 = false;
+				break;
+			}
+			if (strv[i + 1] >= "80" && strv[i + 1] <= "C0" &&
+				strv[i + 2] >= "80" && strv[i + 2] <= "C0" &&
+				strv[i + 3] >= "80" && strv[i + 3] <= "C0")
+			{
+				i += 3;
+				continue;
+			}
+
+		}
+
+	}
+	if (utf8)
+	{
+		cout << 8 << endl;
+	}
+	return 0;
+}
+
