@@ -1,0 +1,25 @@
+Payload length: 需传输的数据payload data的长度，不同的长度有不同的表示方法，总共3种表示方法如下：
+					  如果Payload len 的值在0-125，则是payload data的真实长度，此时无Extend payload length 字段。
+					  如果Payload len 的值是126，则还有16bit 长的Extend payload length 字段，该16位表示payload的真实长度。
+					  如果Payload len 的值是127，则还有64bit 长的Extend payload length 字段，该64位表示payload的真实长度。
+					  注意上面的长度都是网络字节序
+masking-key:  长度为 32bit, 用户数据处理掩码，当MASK字段为1时存在
+Payload Data: 传输的用户数据，如果MASK字段为0，则直接为用户数据，如果MASK字段为1，则为用户数据和masking-key进行异或后的数据，异或处理图示如下
+
+...
+
+现在给你一段websocket协议的网络抓包数据，请按上面的协议介绍输出用户数据
+*/
+
+/*IN
+输入websocket协议的网络抓包数据，每个字节数据间以空格分割，注意输入数据中MASK标志位可能为0，并且为了简化处理只会有1条websocket请求
+
+82 d0 fe 19 07 4f b1 49 53 06 b1 57 54 6f 8c 6d 74 3f c4 36 28 7e c9 2b 29 7d cd 37 35 7b d0 28 30 7a c4 21 37 60 9d 78 6a 60 8c 7c 66 23 93 76 69 26 8a 76 75 70 9d 71 66 21 90 7c 6b 72 cf 3f 74 3a 9c 6d 7e 3f 9b 24 37 42 f4 5a 54 2a 8f 23 27 7e f3 13 0a 45
+*/
+
+/*OUT
+输出原始的用户数据 ，注意用户数据只会有一条且为字符串，不存在多条用户数据的情况
+
+OPTIONS rtsp://172.23.24.175:80/cam/realmonitor?channel=1&subtype=0
+CSeq: 1
+*/
