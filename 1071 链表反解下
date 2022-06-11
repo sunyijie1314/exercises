@@ -1,0 +1,65 @@
+/*HINT
+从输入中我们知道链表首节点地址为00e68138，则找到对应内存40 81 e6 00 01 00 00 00，解析出地址00e68140，以此类推。
+解析过程中发现节点00e68158发生回环，故输出地址
+*/
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <map>
+using namespace std;
+
+string plus8(string str)
+{
+	int n = str.size() - 1;
+	if (str[n] == '0')
+	{
+		str[n] += 8;
+		return str;
+	}
+}
+
+int main()
+{
+	string str;
+	string start;
+	string tmp;
+	string num;
+	map<string, string>ssm;
+	int n;
+	cin >> start >> n;
+	for (size_t i = 0; i < n / 16; i++)
+	{
+		cin >> str >> tmp;
+		for (size_t k = 0; k < 2; k++)
+		{
+			if (k)
+			{
+				str = plus8(str);
+			}
+			for (size_t j = 0; j < 8; j++)
+			{
+				cin >> tmp;
+				num = tmp+num;
+			}
+			num = num.substr(8);
+			ssm[str] = num;
+			num = "";
+		}
+	}
+	map<string, string> newm;
+	newm[start] = "";
+	while (ssm.find(start)!=ssm.end())
+	{
+		if (newm.find(ssm[start])==newm.end())
+		{
+			newm[ssm[start]] = "";
+			start = ssm[start];
+		}
+		else
+		{
+			cout << start << endl;
+			break;
+		}
+	}
+}
